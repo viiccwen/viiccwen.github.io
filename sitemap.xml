@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://viiccwen.github.io/VicWen-2023-RECAP/</loc>
+    
+    <lastmod>2024-01-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://viiccwen.github.io/ComputerRepair-Competitor-Experience/</loc>
     
     <lastmod>2024-01-17</lastmod>
@@ -12,15 +21,6 @@
   
   <url>
     <loc>https://viiccwen.github.io/NewTaipeiCity-ComputerRepairment-Camp-Lecturer-Records/</loc>
-    
-    <lastmod>2024-01-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://viiccwen.github.io/VicWen-2023-RECAP/</loc>
     
     <lastmod>2024-01-16</lastmod>
     
