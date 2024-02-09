@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>解決VMWare使用Kali虛擬機無網路問題</title>
+    <link href="/2024-VMware-Kali-Network-Solution/"/>
+    <url>/2024-VMware-Kali-Network-Solution/</url>
+    
+    <content type="html"><![CDATA[<h1 id="問題"><a href="#問題" class="headerlink" title="問題"></a>問題</h1><p>當我重灌電腦後，重裝VMware，重裝Kali虛擬機，卻發生網路連接不上的問題。</p><p>嘗試了幾種方式後，折騰了一小時後，最後終於找到問題所在了…。</p><p>首先我先去看了網路裝置，確認網路有沒有問題。</p><p>打開 <code>advanced network</code>，將裝置指定上。</p><p><img src="https://imgur.com/1U2P6vA.jpg"></p><p>用 <code>ifconfig</code>,<code>ipconfig</code> 看host跟client的網路有沒有問題，host和virtual網卡和都用DHCP，IP網段也確定都在<code>192.168.xxx.xxx</code>（VMnet8）</p><p><img src="https://imgur.com/CMiKH12.jpg"></p><p>也沒用…，後來去restart <code>DHCP</code> 和 <code>NAT</code> Service，一樣掛。</p><p><img src="https://imgur.com/7VkiRIW.jpg"></p><p><em><strong>最後將VMWare的網卡恢復初廠設定就搞定了</strong></em></p><h1 id="電腦配置"><a href="#電腦配置" class="headerlink" title="電腦配置"></a>電腦配置</h1><p>不確定我們面對的問題是否相同，我列一下自己的配置：</p><ol><li>Host - Win11-22H2 (好像是罪魁禍首)</li><li>VM - VMware Workstation 17 Player</li><li>Virtual System - Kali 2023.4</li></ol><h1 id="步驟"><a href="#步驟" class="headerlink" title="步驟"></a>步驟</h1><ol><li><p>打開VMware（記得先將所有虛擬機關機）</p></li><li><p>Edit &gt; Virtual Network Editor</p></li></ol><p><img src="https://imgur.com/OmNzQkk.jpg"></p><ol start="3"><li>Change Settings &gt; Restore Defaults</li></ol><p><img src="https://imgur.com/knJlb6h.jpg"></p><ol start="4"><li>重開虛擬機</li></ol><h1 id="結語"><a href="#結語" class="headerlink" title="結語"></a>結語</h1><p>有時候網路就是很玄，是條需要耐心的路XD</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>疑難排解</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Kali</tag>
+      
+      <tag>VMware</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>工科技藝競賽電腦修護職種：選手歷程</title>
     <link href="/ComputerRepair-Competitor-Experience/"/>
     <url>/ComputerRepair-Competitor-Experience/</url>
