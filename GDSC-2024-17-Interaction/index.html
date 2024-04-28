@@ -16,25 +16,24 @@
   <meta name="author" content="VicWen">
   <meta name="keywords" content="">
   
-    <meta name="description" content="問題當我重灌電腦後，重裝VMware，重裝Kali虛擬機，卻發生網路連接不上的問題。 嘗試了幾種方式後，折騰了一小時後，最後終於找到問題所在了…。 首先我先去看了網路裝置，確認網路有沒有問題。 打開 advanced network，將裝置指定上。  用 ifconfig,ipconfig 看host跟client的網路有沒有問題，host和virtual網卡和都用DHCP，IP網段也確定都在19">
+    <meta name="description" content="前言很高興在 2024&#x2F;04&#x2F;21（日）能夠來參加17校GDSC聯合技術交流會，跟上次的心情類似，不只是抱著想交流技術、專案的心情，更是想去認識更多在不同領域中發光發熱的存在，讓自己在人生中的道路不孤單，有動力繼續向前！ 但這次的身分變得不同了，從General Member搖身一變，變成了Core Team Member了。 活動流程13:00-13:15 報到 13:15-">
 <meta property="og:type" content="article">
-<meta property="og:title" content="解決VMWare使用Kali虛擬機無網路問題">
-<meta property="og:url" content="https://viiccwen.github.io/2024-VMware-Kali-Network-Solution/index.html">
+<meta property="og:title" content="2024年17校GDSC聯合技術交流會">
+<meta property="og:url" content="https://viiccwen.github.io/GDSC-2024-17-Interaction/index.html">
 <meta property="og:site_name" content="VicWen Blog">
-<meta property="og:description" content="問題當我重灌電腦後，重裝VMware，重裝Kali虛擬機，卻發生網路連接不上的問題。 嘗試了幾種方式後，折騰了一小時後，最後終於找到問題所在了…。 首先我先去看了網路裝置，確認網路有沒有問題。 打開 advanced network，將裝置指定上。  用 ifconfig,ipconfig 看host跟client的網路有沒有問題，host和virtual網卡和都用DHCP，IP網段也確定都在19">
+<meta property="og:description" content="前言很高興在 2024&#x2F;04&#x2F;21（日）能夠來參加17校GDSC聯合技術交流會，跟上次的心情類似，不只是抱著想交流技術、專案的心情，更是想去認識更多在不同領域中發光發熱的存在，讓自己在人生中的道路不孤單，有動力繼續向前！ 但這次的身分變得不同了，從General Member搖身一變，變成了Core Team Member了。 活動流程13:00-13:15 報到 13:15-">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:image" content="https://imgur.com/PAfgYKK.jpg">
-<meta property="article:published_time" content="2024-02-09T01:59:17.000Z">
-<meta property="article:modified_time" content="2024-04-01T13:24:57.525Z">
+<meta property="og:image" content="https://imgur.com/hrASZdh.jpg">
+<meta property="article:published_time" content="2024-04-28T12:50:14.000Z">
+<meta property="article:modified_time" content="2024-04-28T12:55:36.347Z">
 <meta property="article:author" content="VicWen">
-<meta property="article:tag" content="Kali">
-<meta property="article:tag" content="VMware">
+<meta property="article:tag" content="GDSC">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://imgur.com/PAfgYKK.jpg">
+<meta name="twitter:image" content="https://imgur.com/hrASZdh.jpg">
   
   
   
-  <title>解決VMWare使用Kali虛擬機無網路問題 - VicWen Blog</title>
+  <title>2024年17校GDSC聯合技術交流會 - VicWen Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -225,13 +224,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/banner.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('https://imgur.com/hrASZdh.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="解決VMWare使用Kali虛擬機無網路問題"></span>
+            <span id="subtitle" data-typed-text="2024年17校GDSC聯合技術交流會"></span>
           
         </div>
 
@@ -242,8 +241,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-02-09 09:59" pubdate>
-          2024年2月9日 上午
+        <time datetime="2024-04-28 20:50" pubdate>
+          2024年4月28日 晚上
         </time>
       </span>
     
@@ -254,7 +253,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          205 字
+          1k 字
         
       </span>
     
@@ -265,7 +264,7 @@
         
         
         
-          2 分鐘
+          9 分鐘
         
       </span>
     
@@ -302,42 +301,44 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">解決VMWare使用Kali虛擬機無網路問題</h1>
+            <h1 id="seo-header">2024年17校GDSC聯合技術交流會</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="問題"><a href="#問題" class="headerlink" title="問題"></a>問題</h1><p>當我重灌電腦後，重裝VMware，重裝Kali虛擬機，卻發生網路連接不上的問題。</p>
-<p>嘗試了幾種方式後，折騰了一小時後，最後終於找到問題所在了…。</p>
-<p>首先我先去看了網路裝置，確認網路有沒有問題。</p>
-<p>打開 <code>advanced network</code>，將裝置指定上。</p>
-<p><img src="https://imgur.com/1U2P6vA.jpg" srcset="/img/loading.gif" lazyload></p>
-<p>用 <code>ifconfig</code>,<code>ipconfig</code> 看host跟client的網路有沒有問題，host和virtual網卡和都用DHCP，IP網段也確定都在<code>192.168.xxx.xxx</code>（VMnet8）</p>
-<p><img src="https://imgur.com/CMiKH12.jpg" srcset="/img/loading.gif" lazyload></p>
-<p>也沒用…，後來去restart <code>DHCP</code> 和 <code>NAT</code> Service，一樣掛。</p>
-<p><img src="https://imgur.com/7VkiRIW.jpg" srcset="/img/loading.gif" lazyload></p>
-<p><em><strong>最後將VMWare的網卡恢復初廠設定就搞定了</strong></em></p>
-<h1 id="電腦配置"><a href="#電腦配置" class="headerlink" title="電腦配置"></a>電腦配置</h1><p>不確定我們面對的問題是否相同，我列一下自己的配置：</p>
-<ol>
-<li>Host - Win11-22H2 (好像是罪魁禍首)</li>
-<li>VM - VMware Workstation 17 Player</li>
-<li>Virtual System - Kali 2023.4</li>
-</ol>
-<h1 id="步驟"><a href="#步驟" class="headerlink" title="步驟"></a>步驟</h1><ol>
-<li><p>打開VMware（記得先將所有虛擬機關機）</p>
-</li>
-<li><p>Edit &gt; Virtual Network Editor</p>
-</li>
-</ol>
-<p><img src="https://imgur.com/OmNzQkk.jpg" srcset="/img/loading.gif" lazyload></p>
-<ol start="3">
-<li>Change Settings &gt; Restore Defaults</li>
-</ol>
-<p><img src="https://imgur.com/knJlb6h.jpg" srcset="/img/loading.gif" lazyload></p>
-<ol start="4">
-<li>重開虛擬機</li>
-</ol>
-<h1 id="結語"><a href="#結語" class="headerlink" title="結語"></a>結語</h1><p>有時候網路就是很玄，是條需要耐心的路XD</p>
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>很高興在 2024&#x2F;04&#x2F;21（日）能夠來參加17校GDSC聯合技術交流會，跟上次的心情類似，不只是抱著想交流技術、專案的心情，更是想去認識更多在不同領域中發光發熱的存在，讓自己在人生中的道路不孤單，有動力繼續向前！</p>
+<p>但這次的身分變得不同了，從General Member搖身一變，變成了<strong>Core Team Member</strong>了。</p>
+<h1 id="活動流程"><a href="#活動流程" class="headerlink" title="活動流程"></a>活動流程</h1><p>13:00-13:15 報到</p>
+<p>13:15-13:50 破冰小遊戲</p>
+<p>13:50-14:00 休息時間</p>
+<p>14:00-14:50 各校專案分享</p>
+<p>14:50-15:00 休息時間</p>
+<p>15:00-16:00 分組活動</p>
+<p>16:00-16:30 如何申請成為GDSC Lead ?</p>
+<p>16:30-17:00 Google知識王暨頒獎</p>
+<p>17:00-18:00 自由交流</p>
+<h1 id="破冰"><a href="#破冰" class="headerlink" title="破冰"></a>破冰</h1><p>大家需要站起來自我介紹，但是要融入你抽到的角色中XD，像我們這組就是老師。</p>
+<p>然後我就跑到別組去跟不認識的聊天了，認識一位清大、交大的學長，我還一直瘋狂的問一些未來的方向，雖然他們一直叫我不用急哈哈哈，但對未來沒方向，真的會很焦慮，我現在也仍在找尋未來要走的方向，不要讓自己一直停滯不前。</p>
+<h1 id="各校專案分享"><a href="#各校專案分享" class="headerlink" title="各校專案分享"></a>各校專案分享</h1><h2 id="師大酒比特"><a href="#師大酒比特" class="headerlink" title="師大酒比特"></a>師大酒比特</h2><p>其中最印象深刻的就是師大同學們的分享了！</p>
+<p>他們有分享到一款名為「師大酒比特」的專案，透過填寫Google表單，由系統推薦給妳&#x2F;你最適合你的對象。</p>
+<p>但他們的小編其實滿慘的，居然用人工寄信的方式…寄了四百多封，連我聽著都感覺崩潰了，為何不寫個自動化呢XD。</p>
+<p>最好笑的是，有人送了一堆紀錄過去，讓主辦方寄信給本人，要他不要再送了XD。</p>
+<p>我們後來還跟他們聊了下，或許也能銜接至臺科這邊，做個臺科酒比特。</p>
+<h1 id="遊戲"><a href="#遊戲" class="headerlink" title="遊戲"></a>遊戲</h1><p>Kahoot環節！</p>
+<p>可惜，我的GDSC價值還不夠高，飲恨拿第四，哭了（但我有凹了個小禮物嘿嘿）。</p>
+<h1 id="自由交流"><a href="#自由交流" class="headerlink" title="自由交流"></a>自由交流</h1><p>這次相較於上次，熟悉了許多，或許上次是孤軍奮戰吧，獨自一人前往交流會認識其他人，顯得有點膽怯，但這次就很大方的走過去跟大家自然的聊起天來，還認識了個北醫醫的學長，超強…GitHub的Campus Ambassador，Orz 超電。</p>
+<p>也跟學長聊了些未來的規劃，其中有位學長要去國外讀研，我其實也有類似的想法，但真的是現實面狠狠的打擊在我身上QQ，一部分也是金援的問題。</p>
+<p>但這次的活動時長比較短，感覺大家都還沒聊夠，於是我們就一群人揪一揪去吃晚餐了。</p>
+<h1 id="11位晚餐聚會"><a href="#11位晚餐聚會" class="headerlink" title="11位晚餐聚會"></a>11位晚餐聚會</h1><p>後來大家揪一揪跑去吃飯，由臺科GDSC下任Core Team Member * 4 帶領了剩下7位新認識的朋友們一起去吃燒烤！</p>
+<p>我們跑去吃<a target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=100092295227119">99%燒烤</a>，在大安區樂業街那！</p>
+<p>在聚會中，有的人聊動漫，有的人聊大學，有的人聊社團、興趣、專案…等等，很高興能夠在短短的半天內，就能收穫新的友情，甚至能毫無障礙的聊起天來，我們就這樣一路吃到了九點多。</p>
+<p>然後我們吃超飽XD，一個人只吃了快兩百而已，超讚耶。</p>
+<p><img src="https://imgur.com/PPNaQKq.jpg" srcset="/img/loading.gif" lazyload alt="聚餐合照"></p>
+<p><img src="https://imgur.com/SguDVTI.jpg" srcset="/img/loading.gif" lazyload alt="聚餐合照"></p>
+<h1 id="結語"><a href="#結語" class="headerlink" title="結語"></a>結語</h1><p>好像每次交流會都卡在期中考左右，所以來的人都沒有說到很多XD，而且跟上次的人都不一樣，全是生面孔。</p>
+<p>這是我第二次參加GDSC的交流會，很感謝北醫的Lead都會辦交流會，讓大家一同交流技術、交流自己學校的事物！但很可惜的是，臺科又不是協辦單位，希望自己onboard後能成為協辦單位，嘻嘻。也希望自己上任後能好好lead NTUST GDSC一起鑽研技術，好好經營社團，大家就像一個大家庭一樣！</p>
+<p>最後一樣，希望未來我也能成為在舞台上閃閃發光，在各領域中嶄露頭角的人，以此文共勉之。</p>
+<p><img src="https://imgur.com/hrASZdh.jpg" srcset="/img/loading.gif" lazyload alt="大合照"></p>
 
                 
               </div>
@@ -356,7 +357,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E7%96%91%E9%9B%A3%E6%8E%92%E8%A7%A3/" class="category-chain-item">疑難排解</a>
+  <a href="/categories/%E7%B4%80%E9%8C%84-%E5%BF%83%E5%BE%97/" class="category-chain-item">紀錄 &amp; 心得</a>
   
   
 
@@ -371,9 +372,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Kali/" class="print-no-link">#Kali</a>
-      
-        <a href="/tags/VMware/" class="print-no-link">#VMware</a>
+        <a href="/tags/GDSC/" class="print-no-link">#GDSC</a>
       
     </div>
   
@@ -385,8 +384,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>解決VMWare使用Kali虛擬機無網路問題</div>
-      <div>https://viiccwen.github.io/2024-VMware-Kali-Network-Solution/</div>
+      <div>2024年17校GDSC聯合技術交流會</div>
+      <div>https://viiccwen.github.io/GDSC-2024-17-Interaction/</div>
     </div>
     <div class="license-meta">
       
@@ -398,7 +397,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>發布於</div>
-          <div>2024年2月9日</div>
+          <div>2024年4月28日</div>
         </div>
       
       
@@ -430,18 +429,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/GDSC-2024-17-Interaction/" title="2024年17校GDSC聯合技術交流會">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">2024年17校GDSC聯合技術交流會</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/ComputerRepair-Competitor-Experience/" title="工科技藝競賽電腦修護職種：選手歷程">
-                        <span class="hidden-mobile">工科技藝競賽電腦修護職種：選手歷程</span>
+                      <a href="/2024-VMware-Kali-Network-Solution/" title="解決VMWare使用Kali虛擬機無網路問題">
+                        <span class="hidden-mobile">解決VMWare使用Kali虛擬機無網路問題</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
