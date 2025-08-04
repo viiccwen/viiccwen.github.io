@@ -3,8 +3,8 @@ title: ClickHouse 系列：壓縮技術與 Data Skipping Indexes 如何大幅加
 published: 2025-08-07
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
-tags: [ClickHouse, Backend]
-category: '技術'
+tags: [ClickHouse, Database]
+category: 'software development'
 draft: false 
 lang: ''
 ---

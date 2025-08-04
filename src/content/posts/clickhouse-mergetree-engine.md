@@ -3,8 +3,8 @@ title: ClickHouse 系列：ClickHouse 儲存引擎 - MergeTree
 published: 2025-08-06
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
-tags: [ClickHouse, Backend]
-category: '技術'
+tags: [ClickHouse, Database]
+category: 'software development'
 draft: false 
 lang: ''
 ---

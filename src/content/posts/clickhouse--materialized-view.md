@@ -3,8 +3,8 @@ title: ClickHouse 系列：Materialized Views 即時聚合查詢
 published: 2025-08-10
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
-tags: [ClickHouse, Backend]
-category: '技術'
+tags: [ClickHouse, Database]
+category: 'software development'
 draft: false 
 lang: ''
 ---
@@ -82,7 +82,7 @@ GROUP BY date, page;
 | 應用場景                                         | 說明                                       |
 | -------------------------------------------- | ---------------------------------------- |
 | **高頻查詢彙總結果表 (Dashboard/BI 報表)**              | 先將重計算的聚合結果寫入目標表，查詢時僅需掃小型表格               |
-| **即時事件流彙總 (如 PV/UV 統計)**                     | 結合 Kafka + MV，即時統計點擊數、瀏覽量等               |
+| **即時Event Streaming彙總 (如 PV/UV 統計)**                     | 結合 Kafka + MV，即時統計點擊數、瀏覽量等               |
 | **指標統計與彙總 (Metrics Storage)**                | 以 Materialized View 實時計算指標數據，適合 IoT、監控平台 |
 | **ReplacingMergeTree 或 SummingMergeTree 結合** | 目標表可以使用去重、聚合引擎進一步優化結果儲存                  |
 

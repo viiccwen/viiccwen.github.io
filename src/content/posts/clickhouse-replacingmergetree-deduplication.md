@@ -3,8 +3,8 @@ title: ClickHouse 系列：ReplacingMergeTree 與資料去重機制
 published: 2025-08-08
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
-tags: [ClickHouse, Backend]
-category: '技術'
+tags: [ClickHouse, Database]
+category: 'software development'
 draft: false 
 lang: ''
 ---

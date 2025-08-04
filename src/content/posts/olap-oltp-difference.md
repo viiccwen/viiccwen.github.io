@@ -4,7 +4,7 @@ published: 2025-08-03
 description: ''
 image: ''
 tags: [Backend]
-category: '技術'
+category: 'software development'
 draft: true 
 lang: ''
 ---
