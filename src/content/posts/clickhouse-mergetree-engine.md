@@ -58,6 +58,81 @@ MergeTree 家族的引擎具備以下幾個特性：
 * **查詢效率提升**：依據 Partition 與 Primary Key 排序，能快速定位查詢資料區塊，避免全表掃描。
 * **資料壓縮與去重整合**：透過 Merge 操作合併資料時進行壓縮與去重，大幅降低儲存空間與查詢延遲。
 
+
+## 語法和範例
+
+```sql
+CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
+(
+    name1 [type1] [[NOT] NULL] [DEFAULT|MATERIALIZED|ALIAS|EPHEMERAL expr1] [COMMENT ...] [CODEC(codec1)] [STATISTICS(stat1)] [TTL expr1] [PRIMARY KEY] [SETTINGS (name = value, ...)],
+    name2 [type2] [[NOT] NULL] [DEFAULT|MATERIALIZED|ALIAS|EPHEMERAL expr2] [COMMENT ...] [CODEC(codec2)] [STATISTICS(stat2)] [TTL expr2] [PRIMARY KEY] [SETTINGS (name = value, ...)],
+    ...
+    INDEX index_name1 expr1 TYPE type1(...) [GRANULARITY value1],
+    INDEX index_name2 expr2 TYPE type2(...) [GRANULARITY value2],
+    ...
+    PROJECTION projection_name_1 (SELECT <COLUMN LIST EXPR> [GROUP BY] [ORDER BY]),
+    PROJECTION projection_name_2 (SELECT <COLUMN LIST EXPR> [GROUP BY] [ORDER BY])
+) ENGINE = MergeTree()
+ORDER BY expr
+[PARTITION BY expr]
+[PRIMARY KEY expr]
+[SAMPLE BY expr]
+[TTL expr
+    [DELETE|TO DISK 'xxx'|TO VOLUME 'xxx' [, ...] ]
+    [WHERE conditions]
+    [GROUP BY key_expr [SET v1 = aggr_func(v1) [, v2 = aggr_func(v2) ...]] ] ]
+[SETTINGS name = value, ...]
+```
+
+### 建立 TABLE
+
+```
+CREATE TABLE user_events
+(
+    EventDate Date,
+    UserID UInt64,
+    EventType String,
+    EventValue Float32
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(EventDate)
+ORDER BY (EventDate, UserID);
+```
+
+### 寫入資料
+
+```sql
+INSERT INTO user_events VALUES ('2025-08-10', 1001, 'click', 1.0);
+INSERT INTO user_events VALUES ('2025-08-10', 1002, 'view', 1.0);
+INSERT INTO user_events VALUES ('2025-08-11', 1001, 'purchase', 299.99);
+```
+
+### 查詢資料
+
+```sql
+SELECT *
+FROM user_events
+WHERE EventDate = '2025-08-10'
+  AND UserID = 1001;
+```
+
+此查詢會根據 Partition 先裁剪至 2025-08 分區，再透過 Primary Key (EventDate, UserID) 直接命中相關 Granule，大幅減少掃描資料量。
+
+### 補充：指定索引 Granularity 
+
+若想更細緻控制 Primary Index 的粒度大小，可以透過 `index_granularity` 參數：
+
+```sql
+ENGINE = MergeTree()
+PARTITION BY toYYYYMM(EventDate)
+ORDER BY (EventDate, UserID)
+SETTINGS index_granularity = 8192;
+```
+
+> 8192 是預設 Granule 大小，若資料查詢行為較分散，也可以調整為更小的粒度 (如 4096) 來提升查詢命中率，但會增加索引體積。
+
+Granularity 會在後面的篇幅中詳細描述，由於這是額外補充，日後了解 Granularity 的定義和用途，可以再回來看補充～
+
+
 ## MergeTree 家族的特殊變種
 
 ClickHouse 根據不同業務需求，衍生出許多 MergeTree 變種引擎：
