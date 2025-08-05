@@ -83,7 +83,7 @@ GROUP BY date, page;
 | -------------------------------------------- | ---------------------------------------- |
 | **高頻查詢彙總結果表 (Dashboard/BI 報表)**              | 先將重計算的聚合結果寫入目標表，查詢時僅需掃小型表格               |
 | **即時Event Streaming彙總 (如 PV/UV 統計)**                     | 結合 Kafka + MV，即時統計點擊數、瀏覽量等               |
-| **指標統計與彙總 (Metrics Storage)**                | 以 Materialized View 實時計算指標數據，適合 IoT、監控平台 |
+| **指標統計與彙總 (Metrics Storage)**                | 以 Materialized View 實時計算指標資料，適合 IoT、監控平台 |
 | **ReplacingMergeTree 或 SummingMergeTree 結合** | 目標表可以使用去重、聚合引擎進一步優化結果儲存                  |
 
 
@@ -159,15 +159,15 @@ Materialized View 提供了一種「自動計算、實時寫入」的聚合機�
 4. [ClickHouse 系列：壓縮技術與 Data Skipping Indexes 如何大幅加速查詢](https://blog.vicwen.app/posts/clickhouse-compression-skipping-index/)
 5. [ClickHouse 系列：ReplacingMergeTree 與資料去重機制](https://blog.vicwen.app/posts/clickhouse-replacingmergetree-deduplication/)
 6. [ClickHouse 系列：SummingMergeTree 進行資料彙總的應用場景](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
-7. [ClickHouse 系列：Materialized Views 即時聚合查詢實戰](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
+7. [ClickHouse 系列：Materialized Views 即時聚合查詢](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse 系列：分區策略與 Partition Pruning 原理解析](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
 9. [ClickHouse 系列：Primary Key、Sorting Key 與 Granule 索引運作原理](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
 10. [ClickHouse 系列：CollapsingMergeTree 與邏輯刪除的最佳實踐](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
-11. [ClickHouse 系列：VersionedCollapsingMergeTree 版本控制與數據衝突解決](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
+11. [ClickHouse 系列：VersionedCollapsingMergeTree 版本控制與資料衝突解決](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse 系列：AggregatingMergeTree 實時指標統計的進階應用](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)
 13. [ClickHouse 系列：Distributed Table 與分布式查詢架構](https://blog.vicwen.app/posts/clickhouse-distributed-table/)
 14. [ClickHouse 系列：Replicated Tables 高可用性與零停機升級實作](https://blog.vicwen.app/posts/clickhouse-replication-failover/)
-15. [ClickHouse 系列：與 Kafka 整合打造即時數據流處理管道](https://blog.vicwen.app/posts/clickhouse-kafka-streaming/)
+15. [ClickHouse 系列：與 Kafka 整合打造即時資料流處理管道](https://blog.vicwen.app/posts/clickhouse-kafka-streaming/)
 16. [ClickHouse 系列：批次匯入最佳實踐 (CSV、Parquet、Native Format)](https://blog.vicwen.app/posts/clickhouse-batch-import/)
 17. [ClickHouse 系列：ClickHouse 與外部資料源整合（MySQL、S3、JDBC）](https://blog.vicwen.app/posts/clickhouse-external-data-integration/)
 18. [ClickHouse 系列：查詢優化實戰 - system.query\_log 與 EXPLAIN 用法](https://blog.vicwen.app/posts/clickhouse-query-log-explain/)

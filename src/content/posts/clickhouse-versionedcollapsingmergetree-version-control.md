@@ -11,8 +11,6 @@ lang: ''
 
 在處理即時 Event Streaming 或高頻變動的資料場景時，僅靠 CollapsingMergeTree 的「新增/刪除」邏輯標記，往往無法應付複雜的資料狀態與版本管理需求。ClickHouse 為此提供了更進階的 **VersionedCollapsingMergeTree** 儲存引擎，透過 `sign` 與 `version` 雙欄位設計，實現更強大的資料去重與版本控制機制。
 
-這篇文章將帶你深入理解 VersionedCollapsingMergeTree 的運作原理、與 ReplacingMergeTree / CollapsingMergeTree 的差異，以及其適用的實戰應用場景。
-
 ## 什麼是 VersionedCollapsingMergeTree？
 
 VersionedCollapsingMergeTree 是在 CollapsingMergeTree 基礎上，加入版本欄位 (version) 的變種儲存引擎。
@@ -68,8 +66,8 @@ INSERT INTO user_profiles VALUES (1, 'Alice_updated', 2, -1);
 
 | 特性                    | CollapsingMergeTree    | ReplacingMergeTree       | VersionedCollapsingMergeTree    |
 | --------------------- | ---------------------- | ------------------------ | ------------------------------- |
-| 邏輯刪除 (soft delete) 支援 | ✅ sign 抵消              | ❌ 無邏輯刪除 (只能用 version 覆蓋) | ✅ sign 抵消                       |
-| 版本控制                  | ❌ 無內建版本概念              | ✅ version 欄位標記最新版本       | ✅ version 決定保留最大版本，結合 sign 進行去重 |
+| 邏輯刪除 (soft delete) 支援 | sign 抵消              | 無邏輯刪除 (只能用 version 覆蓋) | sign 抵消                       |
+| 版本控制                  | 無內建版本概念              | version 欄位標記最新版本       | version 決定保留最大版本，結合 sign 進行去重 |
 | 去重時機                  | Merge 時進行，需配合 FINAL 查詢 | Merge 時進行，需配合 FINAL 查詢   | Merge 時進行，需配合 FINAL 查詢          |
 | 使用場景                  | 簡單新增/刪除標記場景            | 資料補寫/覆寫，保留最新紀錄           | 複雜補寫、刪除、版本控制需求（如事件版本回滾、補資料等）    |
 
@@ -78,7 +76,7 @@ INSERT INTO user_profiles VALUES (1, 'Alice_updated', 2, -1);
 | 應用場景                           | 說明                                                    |
 | ------------------------------ | ----------------------------------------------------- |
 | **資料版本控制 (Data Versioning)**   | 保留同一 Primary Key 的最新版本資料，並可透過補寫與刪除控制資料狀態。             |
-| **即時資料流去重與狀態管理**               | 處理 Kafka、消息佇列中的事件重放與修正，確保資料流中同一主鍵下只有一筆有效紀錄。           |
+| **即時資料流去重與狀態管理**               | 處理 Kafka、Message Queue 中的事件重放與修正，確保資料流中同一主鍵下只有一筆有效紀錄。           |
 | **補資料與刪除修正 (Data Correction)** | 當資料補寫/刪除需要依賴複雜的版本邏輯時，比單純的 CollapsingMergeTree 更合適。    |
 | **IoT 或實時指標狀態更新場景**            | 同一設備 (如 sensor\_id) 狀態不斷更新，需保證資料只保留最新狀態值，並能正確處理刪除與修正。 |
 
@@ -97,9 +95,9 @@ INSERT INTO user_profiles VALUES (1, 'Alice_updated', 2, -1);
 
 ## 範例
 
-假設你正在開發一個用戶行為追蹤平台，需要補寫錯誤事件並能正確刪除修正資料：
+假設你正在開發一個使用者行為追蹤平台，需要補寫錯誤事件並能正確刪除修正資料：
 
-1. **用戶行為事件流表格設計**：
+1. **使用者行為事件流表格設計**：
 
    ```sql
    CREATE TABLE user_events
@@ -135,8 +133,41 @@ INSERT INTO user_profiles VALUES (1, 'Alice_updated', 2, -1);
 | version 應為遞增且能反映資料變動邏輯              | 建議以 timestamp 或 version number 遞增欄位設計，確保去重時保留最新紀錄。       |
 | sign 與 version 的邏輯需清晰一致             | 若資料補寫、刪除狀態標記混亂，將導致 Merge 時無法正確裁剪資料。                      |
 | 結合 Partition Key 設計，減少 Merge 範圍裁剪成本 | 大資料場景中，Partition 可有效縮小去重與版本選擇的影響範圍，提升查詢與 Merge 效率。       |
-| FINAL 查詢請盡量避免全表運行，可透過局部分區或維運合併處理    | 資料量大的情況下，全表 FINAL 會消耗大量資源，應搭配維運腳本定期執行 Optimize FINAL 作業。 |
+| FINAL 查詢請盡量避免全表查詢，可透過局部分區或維運合併處理    | 資料量大的情況下，全表 FINAL 會消耗大量資源，應搭配維運腳本定期執行 Optimize FINAL 作業。 |
 
 ## 結語
 
 VersionedCollapsingMergeTree 是解決 ClickHouse 中「資料狀態管理」與「複雜去重補資料場景」的強大引擎。它兼具 CollapsingMergeTree 的去重邏輯與 ReplacingMergeTree 的版本控制機制，適用於那些資料狀態變動頻繁且版本一致性要求高的業務場景。然而，設計上需特別留意 Primary Key、sign 與 version 的邏輯一致性，才能發揮這個引擎的最大效能優勢。
+
+### ClickHouse 系列持續更新中:
+
+1. [ClickHouse 系列：ClickHouse 是什麼？與傳統 OLAP/OLTP 資料庫的差異](https://blog.vicwen.app/posts/what-is-clickhouse/)
+2. [ClickHouse 系列：ClickHouse 為什麼選擇 Column-based 儲存？講解 Row-based 與 Column-based 的核心差異](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)
+3. [ClickHouse 系列：ClickHouse 儲存引擎 - MergeTree](https://blog.vicwen.app/posts/clickhouse-mergetree-engine)
+4. [ClickHouse 系列：壓縮技術與 Data Skipping Indexes 如何大幅加速查詢](https://blog.vicwen.app/posts/clickhouse-compression-skipping-index/)
+5. [ClickHouse 系列：ReplacingMergeTree 與資料去重機制](https://blog.vicwen.app/posts/clickhouse-replacingmergetree-deduplication/)
+6. [ClickHouse 系列：SummingMergeTree 進行資料彙總的應用場景](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
+7. [ClickHouse 系列：Materialized Views 即時聚合查詢](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
+8. [ClickHouse 系列：分區策略與 Partition Pruning 原理解析](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
+9. [ClickHouse 系列：Primary Key、Sorting Key 與 Granule 索引運作原理](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+10. [ClickHouse 系列：CollapsingMergeTree 與邏輯刪除的最佳實踐](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
+11. [ClickHouse 系列：VersionedCollapsingMergeTree 版本控制與資料衝突解決](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
+12. [ClickHouse 系列：AggregatingMergeTree 實時指標統計的進階應用](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)
+13. [ClickHouse 系列：Distributed Table 與分布式查詢架構](https://blog.vicwen.app/posts/clickhouse-distributed-table/)
+14. [ClickHouse 系列：Replicated Tables 高可用性與零停機升級實作](https://blog.vicwen.app/posts/clickhouse-replication-failover/)
+15. [ClickHouse 系列：與 Kafka 整合打造即時資料流處理管道](https://blog.vicwen.app/posts/clickhouse-kafka-streaming/)
+16. [ClickHouse 系列：批次匯入最佳實踐 (CSV、Parquet、Native Format)](https://blog.vicwen.app/posts/clickhouse-batch-import/)
+17. [ClickHouse 系列：ClickHouse 與外部資料源整合（MySQL、S3、JDBC）](https://blog.vicwen.app/posts/clickhouse-external-data-integration/)
+18. [ClickHouse 系列：查詢優化實戰 - system.query\_log 與 EXPLAIN 用法](https://blog.vicwen.app/posts/clickhouse-query-log-explain/)
+19. [ClickHouse 系列：Projections 進階查詢加速技術](https://blog.vicwen.app/posts/clickhouse-projections-optimization/)
+20. [ClickHouse 系列：Sampling 抽樣查詢與統計技術原理](https://blog.vicwen.app/posts/clickhouse-sampling-statistics/)
+21. [ClickHouse 系列：TTL 資料清理與儲存成本優化](https://blog.vicwen.app/posts/clickhouse-ttl-storage-management/)
+22. [ClickHouse 系列：儲存政策（Storage Policies）與磁碟資源分層策略](https://blog.vicwen.app/posts/clickhouse-storage-policies/)
+23. [ClickHouse 系列：如何在 Kubernetes 部署 ClickHouse Cluster](https://blog.vicwen.app/posts/clickhouse-kubernetes-deployment/)
+24. [ClickHouse 系列：Grafana + ClickHouse 打造高效能即時報表](https://blog.vicwen.app/posts/clickhouse-grafana-dashboard/)
+25. [ClickHouse 系列：APM 日誌分析平台架構實作 (Vector + ClickHouse)](https://blog.vicwen.app/posts/clickhouse-apm-log-analytics/)
+26. [ClickHouse 系列：IoT 巨量感測數據平台設計實戰](https://blog.vicwen.app/posts/clickhouse-iot-analytics/)
+27. [ClickHouse 系列：與 BI 工具整合（Metabase、Superset、Power BI）](https://blog.vicwen.app/posts/clickhouse-bi-integration/)
+28. [ClickHouse 系列：ClickHouse Cloud 與自建部署的優劣比較](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
+29. [ClickHouse 系列：資料庫安全性與權限管理（RBAC）實作](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
+30. [ClickHouse 系列：ClickHouse 發展藍圖與 2025 版本新功能預測](https://blog.vicwen.app/posts/clickhouse-roadmap-2025/)
