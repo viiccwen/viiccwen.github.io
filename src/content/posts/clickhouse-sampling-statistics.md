@@ -1,6 +1,6 @@
 ---
-title: ClickHouse 系列：ClickHouse 是什麼？與傳統 OLAP/OLTP 資料庫的差異
-published: 2025-08-04
+title: ClickHouse 系列：Sampling 抽樣查詢與統計技術原理
+published: 2025-08-25
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]
@@ -9,69 +9,131 @@ draft: false
 lang: ''
 ---
 
-ClickHouse 是由 Yandex 開發的 開源分布式列式資料庫管理系統（Column-oriented DBMS）。
+當面對 PB 級大數據查詢時，如何在不影響統計結論的前提下，快速獲得近似結果？ClickHouse 提供了高效的 **Sampling 抽樣查詢技術**，讓你能夠用「**1% 的資料，取得 95% 準確度的結果**」。
 
-主要針對 **即時數據分析** (**Real-Time Analytics**) 場景設計，能夠在秒級內處理 **PB 級**數據。
+## 什麼是 Sampling？
 
-::github{repo=ClickHouse/ClickHouse}
+Sampling 是一種讓查詢只掃描部分資料進行統計預估的技術，主要應用於：
 
-## 架構
+* Dashboard 即時指標大盤
+* PB 級大數據近似統計查詢
+* 全表掃描耗時過久的場景
 
-![ClickHouse Architecture](https://clickhouse.com/docs/assets/ideal-img/_vldb2024_2_Figure_0.ab9606a.1024.png)
+ClickHouse 透過「Sampling Key」來實現有序與隨機性兼具的抽樣機制。
 
-ClickHouse 的整體設計邏輯非常清晰：以高效能讀取為核心，透過分散式架構與儲存最佳化，讓秒級查詢在 PB 級數據中成為可能。
-從資料寫入、儲存、索引到查詢回傳，ClickHouse 有著一套完全為 OLAP 場景最佳化的底層架構。
+## 工作原理
 
-我們可以將流程稍微簡化成以下步驟：
+1. **SAMPLE BY** 欄位為 Hash 分布基準。
+2. 查詢時可透過 **SAMPLE K** 讓 ClickHouse 只掃描 K 百分比的資料。
+3. 抽樣是**確定性**的，對同一條件查詢結果不會改變。
+4. 跨表 Sampling Key 一致時，可支援 JOIN/IN 子查詢下的抽樣一致性。
 
+## SAMPLE 語法用法與差異
+
+### 1. SAMPLE k
+
+* k 為 0 到 1 的浮點數。
+* 查詢會隨機挑選約 k 比例的資料片段 (Granules) 進行處理。
+* 聚合值需手動乘上 K 倍來還原近似統計結果。
+
+```sql
+SELECT Action, count() * 10 AS cnt
+FROM user_events
+SAMPLE 0.1
+GROUP BY Action;
 ```
-資料寫入 → 拆分成 Data Parts → Partition 劃分 → Primary Key 排序 → 壓縮 → Merge → 索引裁剪 → 向量化查詢 → 回傳結果
+
+這段 SQL 會只讀取 10% 資料，查詢結果再乘上 10 還原。
+
+### 2. SAMPLE N
+
+* N 為目標處理的行數 (近似值)。
+* ClickHouse 會掃描至少 N 筆資料的顆粒 (Granules)。
+* 使用 **\_sample\_factor** 虛擬欄位來自動估算放大倍率。
+
+```sql
+SELECT sum(PageViews * _sample_factor)
+FROM visits
+SAMPLE 10000000;
 ```
 
-看不懂？沒關係，追完系列文章就全都懂了 😎
+```sql
+SELECT sum(_sample_factor)
+FROM visits
+SAMPLE 10000000;
+```
 
-> 圖片取自 [Architecture Overview](https://clickhouse.com/docs/academic_overview)
+### 3. SAMPLE k OFFSET m
 
-## 特色 & 特性
+* k: 取樣比例
+* m: 取樣偏移量 (0\~1 之間)
+* 可用於避免不同查詢 sample 重疊相同資料區塊。
 
-| ClickHouse 技術特性| 說明 |
-| ---------------- | ---------------- |
-| Columnar Storage | 只讀取需要的欄位，避免不必要的 I/O。 |
-| Vectorized Execution | 將資料轉成 SIMD 批次處理，加速 CPU 運算效率。|
-| Compression| 各種編碼方式 (LZ4, ZSTD, Delta Encoding) 提供高壓縮比，降低儲存成本。 |
-| Data Skipping Indexes | 不需掃描全部資料，可根據索引直接跳過不相關的數據區塊，查詢更快。|
-| MergeTree 儲存引擎 | 強大靈活的底層結構，支援分區、排序鍵、TTL 清理機制，適合大量數據分析。|
-| Materialized Views | 可將複雜查詢結果預先計算並實時更新，大幅加快查詢速度。|
-| 分布式架構     | 支援 Sharding 與 Replica ，易於擴展到 PB 級數據處理規模。|
-| Near-Real-Time Ingestion | 支援高吞吐量寫入 (如 Kafka Stream)，數據可秒級查詢分析。|
+```sql
+SELECT *
+FROM visits
+SAMPLE 0.1 OFFSET 0.5;
+```
 
+## 建表時指定 Sampling Key
 
-## OLAP v.s. OLTP 基本概念
+僅 **MergeTree 家族表引擎** 支援 Sampling，且建表時需指定 Sampling Key。
 
-| 分類   | OLTP (Online Transaction Processing) | OLAP (Online Analytical Processing) |
-| ---- | ------------------------------------ | ----------------------------------- |
-| 主要用途 | 交易處理 (CRUD 操作) | 數據分析、統計報表 |
-| 操作特性 | 少量資料的頻繁寫入 | 大量資料的批次查詢 |
-| 查詢型態 | 單筆/少量記錄查詢 | 大範圍聚合查詢 (Aggregation) |
-| 儲存結構 | 行式存儲 (Row-based) | 列式存儲 (Column-based) |
-| 代表產品 | MySQL, PostgreSQL, Oracle | ClickHouse, Druid, Redshift |
+```sql
+CREATE TABLE user_events
+(
+    EventDate DateTime,
+    UserID UInt64,
+    Action String
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(EventDate)
+ORDER BY (UserID, EventDate)
+SAMPLE BY intHash64(UserID);
+```
 
-## ClickHouse 與傳統 OLAP 資料庫的差異
+選擇高 Cardinality 且分佈均勻的欄位 (如 UserID) 作為 SAMPLE BY 是關鍵。
 
-| 項目   | ClickHouse                      | 傳統 Data Warehouse (如 Oracle DW, Teradata) |
-| ---- | ------------------------------- | ----------------------------------------- |
-| 架構   | 分布式列式存儲| 多數為行式存儲或需額外配置列式引擎 |
-| 查詢速度 | 毫秒級到秒級回應| 通常需數秒到數分鐘 |
-| 硬體需求 | 可用商用硬體 | 多數需昂貴專用伺服器 |
-| 成本   | 開源免費/雲端計價模式 | 軟硬體成本高昂 |
-| 延展性  | 支援線性水平擴展 (Sharding/Replication) | 擴展成本高 |
+## 範例：從 20 秒降到 2 秒
 
+### 原始查詢 (全表掃描)
 
-## ClickHouse 與 OLTP 資料庫（如 MySQL, PostgreSQL）的差異
+```sql
+SELECT Action, count() FROM user_events GROUP BY Action;
+-- 查詢花了：20 秒
+```
 
-1. OLTP 資料庫在於 ACID 交易完整性、寫入頻繁的即時處理。
-2. ClickHouse 更適合「**大量讀取查詢**」且「**不需要頻繁即時修改**」的場景（如報表查詢、BI 分析）。
-3. OLTP 常見的 UPDATE/DELETE 操作在 ClickHouse 中屬於非即時（Mutation 機制）。
+### 抽樣查詢 (SAMPLE 0.1)
+
+```sql
+SELECT Action, count() * 10 FROM user_events SAMPLE 0.1 GROUP BY Action;
+-- 查詢花了：2 秒
+```
+
+相較於全表掃描，抽樣查詢時間縮短 10 倍，且統計結果的誤差率維持在 5% 以內。
+
+## Sampling 查詢驗證
+
+透過 EXPLAIN ESTIMATE 可預估查詢將掃描的資料量。
+
+```sql
+EXPLAIN ESTIMATE SELECT * FROM user_events SAMPLE 0.1;
+```
+
+| parts | marks  | rows                     |
+| ----- | ------ | ------------------------ |
+| 10/10 | 100/10 | 100,000,000 / 10,000,000 |
+
+## 常見問題與誤區
+
+| 問題                      | 解決建議                        |
+| ----------------------- | --------------------------- |
+| SAMPLE 查詢無效 → 還是全表掃描    | 建表時必須指定 SAMPLE BY Key。      |
+| 抽樣比例選得太小 → 統計結果誤差大      | 建議 SAMPLE 0.05\~0.2 之間較佳。   |
+| SAMPLE BY 欄位選錯 → 抽樣效果失真 | 選擇分佈均勻的欄位 (如 UserID) 來避免偏倚。 |
+
+## 結語
+
+Sampling 是 ClickHouse 面對大數據場景中極具威力的查詢加速技術，只需簡單設定 SAMPLE BY 與 SAMPLE 百分比，即可輕鬆取得秒級的近似查詢結果，大幅減輕系統 I/O 與計算壓力。
 
 ### ClickHouse 系列持續更新中:
 
@@ -100,8 +162,9 @@ ClickHouse 的整體設計邏輯非常清晰：以高效能讀取為核心，透
 23. [ClickHouse 系列：如何在 Kubernetes 部署 ClickHouse Cluster](https://blog.vicwen.app/posts/clickhouse-kubernetes-deployment/)
 24. [ClickHouse 系列：Grafana + ClickHouse 打造高效能即時報表](https://blog.vicwen.app/posts/clickhouse-grafana-dashboard/)
 25. [ClickHouse 系列：APM 日誌分析平台架構實作 (Vector + ClickHouse)](https://blog.vicwen.app/posts/clickhouse-apm-log-analytics/)
-26. [ClickHouse 系列：IoT 巨量感測數據平台設計實戰](https://blog.vicwen.app/posts/clickhouse-iot-analytics/)
+26. [ClickHouse 系列：IoT 巨量感測資料平台設計實戰](https://blog.vicwen.app/posts/clickhouse-iot-analytics/)
 27. [ClickHouse 系列：與 BI 工具整合（Metabase、Superset、Power BI）](https://blog.vicwen.app/posts/clickhouse-bi-integration/)
 28. [ClickHouse 系列：ClickHouse Cloud 與自建部署的優劣比較](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
 29. [ClickHouse 系列：資料庫安全性與權限管理（RBAC）實作](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
 30. [ClickHouse 系列：ClickHouse 發展藍圖與 2025 版本新功能預測](https://blog.vicwen.app/posts/clickhouse-roadmap-2025/)
+

@@ -1,6 +1,6 @@
 ---
-title: ClickHouse 系列：ClickHouse 是什麼？與傳統 OLAP/OLTP 資料庫的差異
-published: 2025-08-04
+title: ClickHouse 系列：Projections 進階查詢加速技術
+published: 2025-08-24
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]
@@ -9,69 +9,108 @@ draft: false
 lang: ''
 ---
 
-ClickHouse 是由 Yandex 開發的 開源分布式列式資料庫管理系統（Column-oriented DBMS）。
+在處理大規模資料聚合查詢時，ClickHouse 除了靠 Partition Pruning、Data Skipping Index 來加速查詢（~~忘了再回去複習~~），還有一個極具威力的查詢優化武器 — **Projections**。
 
-主要針對 **即時數據分析** (**Real-Time Analytics**) 場景設計，能夠在秒級內處理 **PB 級**數據。
+Projections 能夠透過預先排序、聚合或重組資料結構，讓查詢執行路徑變得**更短、更快**。
 
-::github{repo=ClickHouse/ClickHouse}
+## 什麼是 Projection？
 
-## 架構
+Projection 是一種儲存在 Table Parts 內部的物化結構 (Internal Materialized View)，會針對特定查詢場景提前建立排序或聚合結果。
 
-![ClickHouse Architecture](https://clickhouse.com/docs/assets/ideal-img/_vldb2024_2_Figure_0.ab9606a.1024.png)
+| 特性               | 說明                                          |
+| ---------------- | ------------------------------------------- |
+| 屬於 Table 的一部分    | Projection 資料與 Table 共存在同一個資料片段 (Part)。     |
+| 查詢時自動命中          | 不需修改查詢語法，ClickHouse 會自動選擇最小掃描量的 Projection。 |
+| 可建立多個 Projection | 針對不同查詢需求定義不同 Projections。                   |
 
-ClickHouse 的整體設計邏輯非常清晰：以高效能讀取為核心，透過分散式架構與儲存最佳化，讓秒級查詢在 PB 級數據中成為可能。
-從資料寫入、儲存、索引到查詢回傳，ClickHouse 有著一套完全為 OLAP 場景最佳化的底層架構。
 
-我們可以將流程稍微簡化成以下步驟：
+## Projection 的優勢
 
+1. **減少掃描資料量** → 只讀 Projection 部分資料，不需掃描全表。
+2. **加快聚合計算** → 預先計算好的聚合結果，查詢時直接使用。
+3. **降低 I/O 負載** → 磁碟讀取量大幅下降，查詢延遲降低。
+
+## 範例
+
+```sql
+CREATE TABLE user_events
+(
+    EventDate Date,
+    UserID UInt64,
+    Action String,
+    Version UInt32
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(EventDate)
+ORDER BY (UserID, EventDate)
+SETTINGS index_granularity = 8192
+AS
+SELECT * FROM source_table;
+
+ALTER TABLE user_events
+ADD PROJECTION daily_user_action_counts
+(
+    SELECT
+        EventDate,
+        Action,
+        count() AS ActionCount
+    GROUP BY
+        EventDate,
+        Action
+);
 ```
-資料寫入 → 拆分成 Data Parts → Partition 劃分 → Primary Key 排序 → 壓縮 → Merge → 索引裁剪 → 向量化查詢 → 回傳結果
+
+執行 `OPTIMIZE TABLE user_events FINAL` 後，ClickHouse 會在背景將 Projection 資料寫入 table parts 中。
+
+## 查詢時自動命中 Projection
+
+只要查詢符合 Projection 結構，ClickHouse 會自動使用 Projection 來加速查詢：
+
+```sql
+SELECT EventDate, Action, count() 
+FROM user_events 
+WHERE EventDate = '2025-08-10' 
+GROUP BY EventDate, Action;
 ```
 
-看不懂？沒關係，追完系列文章就全都懂了 😎
+透過 EXPLAIN PLAN 可以看到查詢使用的是 Projection：
 
-> 圖片取自 [Architecture Overview](https://clickhouse.com/docs/academic_overview)
+```sql
+EXPLAIN PLAN SELECT EventDate, Action, count() FROM user_events WHERE EventDate = '2025-08-10' GROUP BY EventDate, Action;
 
-## 特色 & 特性
+Projection: daily_user_action_counts
+ReadFromMergeTree (using projection)
+```
 
-| ClickHouse 技術特性| 說明 |
-| ---------------- | ---------------- |
-| Columnar Storage | 只讀取需要的欄位，避免不必要的 I/O。 |
-| Vectorized Execution | 將資料轉成 SIMD 批次處理，加速 CPU 運算效率。|
-| Compression| 各種編碼方式 (LZ4, ZSTD, Delta Encoding) 提供高壓縮比，降低儲存成本。 |
-| Data Skipping Indexes | 不需掃描全部資料，可根據索引直接跳過不相關的數據區塊，查詢更快。|
-| MergeTree 儲存引擎 | 強大靈活的底層結構，支援分區、排序鍵、TTL 清理機制，適合大量數據分析。|
-| Materialized Views | 可將複雜查詢結果預先計算並實時更新，大幅加快查詢速度。|
-| 分布式架構     | 支援 Sharding 與 Replica ，易於擴展到 PB 級數據處理規模。|
-| Near-Real-Time Ingestion | 支援高吞吐量寫入 (如 Kafka Stream)，數據可秒級查詢分析。|
+## 實戰：Projections 加速 10 倍的案例
 
+假設 user\_events 有 10 億筆資料，執行以下查詢：
 
-## OLAP v.s. OLTP 基本概念
+```sql
+SELECT EventDate, Action, count() 
+FROM user_events 
+WHERE EventDate >= '2025-08-01' 
+GROUP BY EventDate, Action;
+```
 
-| 分類   | OLTP (Online Transaction Processing) | OLAP (Online Analytical Processing) |
-| ---- | ------------------------------------ | ----------------------------------- |
-| 主要用途 | 交易處理 (CRUD 操作) | 數據分析、統計報表 |
-| 操作特性 | 少量資料的頻繁寫入 | 大量資料的批次查詢 |
-| 查詢型態 | 單筆/少量記錄查詢 | 大範圍聚合查詢 (Aggregation) |
-| 儲存結構 | 行式存儲 (Row-based) | 列式存儲 (Column-based) |
-| 代表產品 | MySQL, PostgreSQL, Oracle | ClickHouse, Druid, Redshift |
+* **未使用 Projection**：需掃描完整 10 億筆資料，耗時 20 秒。
+* **使用 Projection**：只需掃描 1 千萬筆 Projection 資料，查詢僅需 **2 秒**。
 
-## ClickHouse 與傳統 OLAP 資料庫的差異
+這種場景特別適合 BI 報表、Dashboard 上的高頻聚合查詢。
 
-| 項目   | ClickHouse                      | 傳統 Data Warehouse (如 Oracle DW, Teradata) |
-| ---- | ------------------------------- | ----------------------------------------- |
-| 架構   | 分布式列式存儲| 多數為行式存儲或需額外配置列式引擎 |
-| 查詢速度 | 毫秒級到秒級回應| 通常需數秒到數分鐘 |
-| 硬體需求 | 可用商用硬體 | 多數需昂貴專用伺服器 |
-| 成本   | 開源免費/雲端計價模式 | 軟硬體成本高昂 |
-| 延展性  | 支援線性水平擴展 (Sharding/Replication) | 擴展成本高 |
+## 注意事項與限制
 
+| 限制項目                                | 說明                                                  |
+| ----------------------------------- | --------------------------------------------------- |
+| Projection 設計需事先規劃                  | Projection 一旦定義後，其結構無法修改。                           |
+| INSERT 會同時寫入 Projection             | 寫入時會增加一些 CPU 運算負擔。                                  |
+| OPTIMIZE TABLE 需執行 Projection Merge | Projection 資料寫入後，需執行 Optimize 來合併 Projection Parts。 |
 
-## ClickHouse 與 OLTP 資料庫（如 MySQL, PostgreSQL）的差異
+## 結語
 
-1. OLTP 資料庫在於 ACID 交易完整性、寫入頻繁的即時處理。
-2. ClickHouse 更適合「**大量讀取查詢**」且「**不需要頻繁即時修改**」的場景（如報表查詢、BI 分析）。
-3. OLTP 常見的 UPDATE/DELETE 操作在 ClickHouse 中屬於非即時（Mutation 機制）。
+Projections 是 ClickHouse 針對大規模聚合查詢加速的核心武器，透過適當的 Projection 設計，可以讓你的查詢效能瞬間提升數倍。
+
+在需要報表統計、即時 Dashboard 的場景中，合理運用 Projections，能大幅降低系統負載與查詢延遲，成為大數據分析中的關鍵利器。
+
 
 ### ClickHouse 系列持續更新中:
 
@@ -100,7 +139,7 @@ ClickHouse 的整體設計邏輯非常清晰：以高效能讀取為核心，透
 23. [ClickHouse 系列：如何在 Kubernetes 部署 ClickHouse Cluster](https://blog.vicwen.app/posts/clickhouse-kubernetes-deployment/)
 24. [ClickHouse 系列：Grafana + ClickHouse 打造高效能即時報表](https://blog.vicwen.app/posts/clickhouse-grafana-dashboard/)
 25. [ClickHouse 系列：APM 日誌分析平台架構實作 (Vector + ClickHouse)](https://blog.vicwen.app/posts/clickhouse-apm-log-analytics/)
-26. [ClickHouse 系列：IoT 巨量感測數據平台設計實戰](https://blog.vicwen.app/posts/clickhouse-iot-analytics/)
+26. [ClickHouse 系列：IoT 巨量感測資料平台設計實戰](https://blog.vicwen.app/posts/clickhouse-iot-analytics/)
 27. [ClickHouse 系列：與 BI 工具整合（Metabase、Superset、Power BI）](https://blog.vicwen.app/posts/clickhouse-bi-integration/)
 28. [ClickHouse 系列：ClickHouse Cloud 與自建部署的優劣比較](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
 29. [ClickHouse 系列：資料庫安全性與權限管理（RBAC）實作](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
