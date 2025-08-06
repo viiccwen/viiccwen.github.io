@@ -1,6 +1,6 @@
 ---
 title: ClickHouse 系列：Replicated Tables 高可用性與零停機升級實作
-published: 2025-08-19
+published: 2025-08-17
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database, Distributed]

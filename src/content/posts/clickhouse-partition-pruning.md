@@ -1,6 +1,6 @@
 ---
 title: ClickHouse 系列：分區策略與 Partition Pruning 技術，如何加速大數據查詢
-published: 2025-08-13
+published: 2025-08-11
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]

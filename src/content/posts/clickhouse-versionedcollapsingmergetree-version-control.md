@@ -1,6 +1,6 @@
 ---
 title: ClickHouse 系列：VersionedCollapsingMergeTree 與資料版本控制
-published: 2025-08-16
+published: 2025-08-14
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]

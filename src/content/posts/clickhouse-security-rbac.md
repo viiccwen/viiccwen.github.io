@@ -1,6 +1,6 @@
 ---
-title: ClickHouse 系列：Sampling 抽樣查詢與統計技術原理
-published: 2025-08-23
+title: ClickHouse 系列：資料庫安全性與權限管理（RBAC）實作
+published: 2025-08-31
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]
@@ -9,131 +9,120 @@ draft: false
 lang: ''
 ---
 
-當面對 PB 級大數據查詢時，如何在不影響統計結論的前提下，快速獲得近似結果？ClickHouse 提供了高效的 **Sampling 抽樣查詢技術**，讓你能夠用「**1% 的資料，取得 95% 準確度的結果**」。
+資料庫安全性與權限管理（RBAC, Role-Based Access Control）是不可或缺的基礎設施。ClickHouse 支援細緻的權限設計與 RBAC 機制，能夠確保數據資源的正確隔離與授權，降低操作風險與資安威脅。
 
-## 什麼是 Sampling？
+## RBAC 架構與核心概念
 
-Sampling 是一種讓查詢只掃描部分資料進行統計預估的技術，主要應用於：
+| 元件            | 說明                                                       |
+| ------------- | -------------------------------------------------------- |
+| **User**      | 資料庫使用者，可指定密碼、網路存取範圍、預設角色等。                               |
+| **Role**      | 角色，承載一組權限（Privilege），可賦予多個使用者。                           |
+| **Privilege** | 權限，例如 SELECT、INSERT、ALTER、DROP，可指定作用範圍 (Database/Table)。 |
+| **Quota**     | 資源限制，如每分鐘可執行的查詢數、讀取資料量等。                                 |
+| **Profile**   | 設定檔，如 max\_memory\_usage、readonly 模式等使用者層級設定。            |
 
-* Dashboard 即時指標大盤
-* PB 級大數據近似統計查詢
-* 全表掃描耗時過久的場景
+RBAC 設計以 **User → Role → Privilege** 的方式進行權限授予，能讓權限管理變得簡單且可重複使用。
 
-ClickHouse 透過「Sampling Key」來實現有序與隨機性兼具的抽樣機制。
 
-## 工作原理
+## 啟用 RBAC 與使用者權限管理
 
-1. **SAMPLE BY** 欄位為 Hash 分布基準。
-2. 查詢時可透過 **SAMPLE K** 讓 ClickHouse 只掃描 K 百分比的資料。
-3. 抽樣是**確定性**的，對同一條件查詢結果不會改變。
-4. 跨表 Sampling Key 一致時，可支援 JOIN/IN 子查詢下的抽樣一致性。
+1. **啟用 Access Management**
 
-## SAMPLE 語法用法與差異
+確保 config.xml 中已啟用：
 
-### 1. SAMPLE k
-
-* k 為 0 到 1 的浮點數。
-* 查詢會隨機挑選約 k 比例的資料片段 (Granules) 進行處理。
-* 聚合值需手動乘上 K 倍來還原近似統計結果。
-
-```sql
-SELECT Action, count() * 10 AS cnt
-FROM user_events
-SAMPLE 0.1
-GROUP BY Action;
+```xml
+<access_control>
+    <enabled>true</enabled>
+</access_control>
 ```
 
-這段 SQL 會只讀取 10% 資料，查詢結果再乘上 10 還原。
+或使用 Docker 時，指定環境變數：
 
-### 2. SAMPLE N
-
-* N 為目標處理的行數 (近似值)。
-* ClickHouse 會掃描至少 N 筆資料的顆粒 (Granules)。
-* 使用 **\_sample\_factor** 虛擬欄位來自動估算放大倍率。
-
-```sql
-SELECT sum(PageViews * _sample_factor)
-FROM visits
-SAMPLE 10000000;
+```yaml
+CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
 ```
 
-```sql
-SELECT sum(_sample_factor)
-FROM visits
-SAMPLE 10000000;
-```
-
-### 3. SAMPLE k OFFSET m
-
-* k: 取樣比例
-* m: 取樣偏移量 (0\~1 之間)
-* 可用於避免不同查詢 sample 重疊相同資料區塊。
+2. **建立 User**
 
 ```sql
-SELECT *
-FROM visits
-SAMPLE 0.1 OFFSET 0.5;
+CREATE USER analyst IDENTIFIED WITH plaintext_password BY 'analyst_pass';
 ```
 
-## 建表時指定 Sampling Key
-
-僅 **MergeTree 家族表引擎** 支援 Sampling，且建表時需指定 Sampling Key。
+3. **建立 Role 並授予權限**
 
 ```sql
-CREATE TABLE user_events
-(
-    EventDate DateTime,
-    UserID UInt64,
-    Action String
-) ENGINE = MergeTree()
-PARTITION BY toYYYYMM(EventDate)
-ORDER BY (UserID, EventDate)
-SAMPLE BY intHash64(UserID);
+CREATE ROLE analytics_reader;
+GRANT SELECT ON default.user_events TO analytics_reader;
 ```
 
-選擇高 Cardinality 且分佈均勻的欄位 (如 UserID) 作為 SAMPLE BY 是關鍵。
-
-## 範例：從 20 秒降到 2 秒
-
-### 原始查詢 (全表掃描)
+4. **將 Role 指派給 User**
 
 ```sql
-SELECT Action, count() FROM user_events GROUP BY Action;
--- 查詢花了：20 秒
+GRANT analytics_reader TO analyst;
 ```
 
-### 抽樣查詢 (SAMPLE 0.1)
+5. **檢查授權結果**
 
 ```sql
-SELECT Action, count() * 10 FROM user_events SAMPLE 0.1 GROUP BY Action;
--- 查詢花了：2 秒
+SHOW GRANTS FOR analyst;
 ```
 
-相較於全表掃描，抽樣查詢時間縮短 10 倍，且統計結果的誤差率維持在 5% 以內。
 
-## Sampling 查詢驗證
+## 進階：Profile 與 Quota 設定
 
-透過 EXPLAIN ESTIMATE 可預估查詢將掃描的資料量。
+1. **建立資源限制 (Quota)**
 
 ```sql
-EXPLAIN ESTIMATE SELECT * FROM user_events SAMPLE 0.1;
+CREATE QUOTA daily_quota KEYED BY user_name FOR INTERVAL 1 DAY MAX queries = 1000, errors = 100;
 ```
 
-| parts | marks  | rows                     |
-| ----- | ------ | ------------------------ |
-| 10/10 | 100/10 | 100,000,000 / 10,000,000 |
+2. **建立 Profile（用於參數限制）**
 
-## 常見問題與誤區
+```sql
+CREATE SETTINGS PROFILE analyst_profile SETTINGS
+    max_memory_usage = 1000000000,
+    readonly = 1;
+```
 
-| 問題                      | 解決建議                        |
-| ----------------------- | --------------------------- |
-| SAMPLE 查詢無效 → 還是全表掃描    | 建表時必須指定 SAMPLE BY Key。      |
-| 抽樣比例選得太小 → 統計結果誤差大      | 建議 SAMPLE 0.05\~0.2 之間較佳。   |
-| SAMPLE BY 欄位選錯 → 抽樣效果失真 | 選擇分佈均勻的欄位 (如 UserID) 來避免偏倚。 |
+3. **將 Quota 與 Profile 指派給 User**
+
+```sql
+ALTER USER analyst
+    SETTINGS PROFILE analyst_profile
+    QUOTA daily_quota;
+```
+
+
+## 模擬登入與權限驗證
+
+1. **使用權限帳號進行查詢**
+
+```bash
+clickhouse-client --user=analyst --password=analyst_pass --query="SELECT * FROM default.user_events LIMIT 10"
+```
+
+2. **測試未授權操作**
+
+```bash
+clickhouse-client --user=analyst --password=analyst_pass --query="DROP TABLE default.user_events"
+-- Expected: DB::Exception: analyst: Not enough privileges.
+```
+
+
+## RBAC 實作策略建議
+
+| 情境                    | 實作建議                                 |
+| --------------------- | ------------------------------------ |
+| 多使用者查詢不同資料表            | 以 Role 將不同表的 SELECT 權限進行組合管理。        |
+| 嚴格限制查詢資源消耗            | 使用 Quota 及 Profile 限制記憶體、查詢數量、錯誤次數等。 |
+| 只讀帳號/唯讀 API 查詢        | 配置 readonly Profile，禁止寫入/DDL 操作。     |
+| 多租戶 (Multi-Tenant) 架構 | 以 Role 與 Database Scope 控制租戶隔離權限。    |
+
 
 ## 結語
 
-Sampling 是 ClickHouse 面對大數據場景中極具威力的查詢加速技術，只需簡單設定 SAMPLE BY 與 SAMPLE 百分比，即可輕鬆取得秒級的近似查詢結果，大幅減輕系統 I/O 與計算壓力。
+ClickHouse 的 RBAC 機制，能夠協助你從「靜態權限管理」升級到「動態可控的使用者行為治理」，不僅能細緻控管資料資源存取權限，還能結合 Quota、Profile 等策略進行資源保護與行為限制，提升系統安全性與穩定性。
+
 
 ### ClickHouse 系列持續更新中:
 

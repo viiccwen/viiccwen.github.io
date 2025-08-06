@@ -1,6 +1,6 @@
 ---
 title: ClickHouse 系列：CollapsingMergeTree 與邏輯刪除
-published: 2025-08-15
+published: 2025-08-13
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]

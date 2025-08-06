@@ -1,6 +1,6 @@
 ---
 title: ClickHouse 系列：Projections 進階查詢加速技術
-published: 2025-08-24
+published: 2025-08-22
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]

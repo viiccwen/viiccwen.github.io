@@ -1,6 +1,6 @@
 ---
 title: ClickHouse 系列：Primary Key、Sorting Key 與 Granule 索引運作原理解析
-published: 2025-08-14
+published: 2025-08-12
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]

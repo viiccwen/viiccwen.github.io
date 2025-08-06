@@ -1,6 +1,6 @@
 ---
 title: ClickHouse 系列：TTL 資料清理與儲存成本優化
-published: 2025-08-26
+published: 2025-08-24
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]

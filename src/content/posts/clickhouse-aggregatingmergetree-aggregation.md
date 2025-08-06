@@ -1,6 +1,6 @@
 ---
 title: ClickHouse 系列：AggregatingMergeTree 實時指標統計的進階應用
-published: 2025-08-17
+published: 2025-08-15
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]

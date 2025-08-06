@@ -1,6 +1,6 @@
 ---
 title: ClickHouse 系列：如何提升查詢優化？system.query_log 與 EXPLAIN 用法
-published: 2025-08-23
+published: 2025-08-21
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database]
