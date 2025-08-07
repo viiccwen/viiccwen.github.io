@@ -12,17 +12,17 @@ lang: ''
 在大規模資料場景下，企業越來越需要能夠 **實時處理與分析 Data Streaming** 的技術架構。
 而 ClickHouse 天生與 Kafka 的整合，提供了一條高效能的 **Event Streaming → Real-Time Analytics** Data Pipeline，讓資料從產生到分析僅需「秒級延遲」。
 
+今天我們會透過專案帶各位了解 Kafka + ClickHouse 的即時 Data Streaming Pipeline，各位可以先將 [Repository Clone](https://github.com/viiccwen/kafka-clickhouse-data-streaming-pipeline) 下來，接下來我們都會用檔案內的內容來教學。
+
 
 ## 架構概念：Kafka + ClickHouse Data Streaming Pipeline
 
-![](https://your-image-link/pipeline.png) ← (我可以幫你畫)
-
 | 流程階段                                    | 說明                                 |
 | --------------------------------------- | ---------------------------------- |
-| Producers                               | 產生事件流的上游系統（如 Web 行為、IoT、APM 等）。    |
-| Kafka Topics                            | 承載資料流的事件佇列，具備高吞吐、可重播特性。            |
+| Producers                               | 產生 Data Streaming 的上游系統（如 Web 行為、IoT、APM 等）。    |
+| Kafka Topics                            | 接收 Data Streaming 的 Message Queue，具備高吞吐、可重播特性。            |
 | Kafka Connect / ClickHouse Kafka Engine | 負責將 Kafka Topic 資料持續寫入 ClickHouse。 |
-| ClickHouse Tables                       | 儲存與分析實時資料流，可搭配物化檢視表、分區設計加速查詢。      |
+| ClickHouse Tables                       | 儲存與實時分析，可搭配 Materialized View、Partitioning 設計加速查詢。      |
 
 
 ## ClickHouse 與 Kafka 整合方式
@@ -35,7 +35,7 @@ lang: ''
 ### 方式二：Kafka Connect + ClickHouse Sink Connector
 
 * 透過 Kafka Connect 架設 ETL Pipeline，使用 ClickHouse Sink Connector 自動將資料流寫入 ClickHouse。
-* 適合 **資料流轉管道標準化需求** (與其他資料平台共用 Kafka Connect 架構)。
+* 適合 **Data Streaming轉管道標準化需求** (與其他資料平台共用 Kafka Connect 架構)。
 
 
 ## 語法 & 範例 & 參數定義
@@ -71,33 +71,6 @@ SETTINGS
     [kafka_max_rows_per_message = 1];
 ```
 
-```sql
-CREATE TABLE queue (
-  timestamp UInt64,
-  level String,
-  message String
-) ENGINE = Kafka('localhost:9092', 'topic', 'group1', 'JSONEachRow');
-
-SELECT * FROM queue LIMIT 5;
-
-CREATE TABLE queue2 (
-  timestamp UInt64,
-  level String,
-  message String
-) ENGINE = Kafka SETTINGS kafka_broker_list = 'localhost:9092',
-                          kafka_topic_list = 'topic',
-                          kafka_group_name = 'group1',
-                          kafka_format = 'JSONEachRow',
-                          kafka_num_consumers = 4;
-
-CREATE TABLE queue3 (
-  timestamp UInt64,
-  level String,
-  message String
-) ENGINE = Kafka('localhost:9092', 'topic', 'group1')
-            SETTINGS kafka_format = 'JSONEachRow',
-                     kafka_num_consumers = 4;
-```
 
 ### 必要參數
 
@@ -153,58 +126,247 @@ CREATE TABLE queue3 (
 | 大批次穩定寫入                  | kafka\_max\_block\_size 與 kafka\_poll\_max\_batch\_size 設為 10萬或更多    |
 | 跨 DC 資料同步                | 適當延長 kafka\_poll\_timeout\_ms 與 kafka\_flush\_interval\_ms，確保網路環境適應性 |
 
-## 實作：Kafka Engine + Materialized View 快速上手
+## 實作環節
 
-### 2. 建立目標 MergeTree Table
+該專案已經使用 Docker Compose 將所有服務和設定都處理好了，各位可以簡單使用。
 
+首先我們看到 `create_tables.sql`，這是我們建立 Kafka + ClickHouse 的關鍵。
+
+### `create_tables.sql`
+
+#### 1. 資料表清理
 ```sql
-CREATE TABLE user_actions (
-    EventDate DateTime,
+// create_tables.sql
+
+-- ClickHouse Tables Setup
+DROP TABLE IF EXISTS default.user_events;
+DROP TABLE IF EXISTS default.kafka_user_events;
+DROP TABLE IF EXISTS default.kafka_to_events_mv;
+```
+
+#### 2. 建立主資料表 `user_events`
+```sql
+// create_tables.sql
+-- Main Events Table
+CREATE TABLE IF NOT EXISTS default.user_events
+(
     UserID UInt64,
-    Action String
+    Action String,
+    EventDate DateTime,
 ) ENGINE = MergeTree()
 PARTITION BY toYYYYMM(EventDate)
 ORDER BY (UserID, EventDate);
 ```
 
-
-### 3. 透過 Materialized View 進行持續寫入
-
+#### 3. 建立 Kafka 接收表 `kafka_user_events`
 ```sql
-CREATE MATERIALIZED VIEW mv_user_actions TO user_actions AS
-SELECT
-    EventDate,
-    UserID,
-    Action
-FROM kafka_events;
+// create_tables.sql
+-- Kafka Engine Table
+CREATE TABLE IF NOT EXISTS default.kafka_user_events
+(
+    UserID UInt64,
+    Action String,
+    EventDate DateTime,
+) ENGINE = Kafka()
+SETTINGS
+    kafka_broker_list = 'kafka:29092',
+    kafka_topic_list = 'user_events_topic',
+    kafka_group_name = 'clickhouse_consumer_v3',
+    kafka_format = 'JSONEachRow',
+    kafka_num_consumers = 1,
+    kafka_thread_per_consumer = 1;
 ```
 
-這樣 Kafka Topic 中的資料一旦有新事件，ClickHouse 會即時將資料寫入 `user_actions` 表格中，達到 **實時資料入庫**。
+這是一張 Kafka Engine Table，**本身不會儲存資料**，而是作為 ClickHouse 消費 Kafka 訊息的入口
 
+:::warning
+Kafka 表本身無法直接查詢。你必須透過 Materialized View 將資料寫入實體表才能存取。
+:::
 
-## 效能與穩定性建議
+#### 4. 建立 Materialized View
 
-| 項目                         | 說明                                      |
-| -------------------------- | --------------------------------------- |
-| Partition Key 設計           | 依據時間或業務邏輯切分 Partition，減少掃描範圍。           |
-| 批次大小 (Batch Size)          | 控制每次從 Kafka 拉取的訊息批次，避免小批次大量寫入造成 I/O 壓力。 |
-| 消費延遲 (poll\_interval\_ms)  | 可調整拉取 Kafka 訊息的頻率，以平衡延遲與資源消耗。           |
-| 資料格式 (JSONEachRow vs Avro) | Avro 更適合結構化且欄位穩定的大規模資料流，效能較佳。           |
-| 避免使用 FINAL 查詢              | 實時流資料應透過表結構設計避免查詢時需要用 FINAL 強制去重。       |
+這是整個 Streaming Pipeline 的關鍵橋樑。Materialized View 會監聽 kafka_user_events，並將其每筆資料**自動寫入**目標表 user_events。
 
+* 使用 `TO default.user_events` 表示這是一個「推送型」 MV。
+* SELECT 子句決定要寫入的資料欄位，需與目標表 schema 相符。
+* 不需要手動執行 INSERT，資料會**自動同步**。
 
-## 實務應用場景
+```sql
+// create_tables.sql
+-- Materialized View to stream data from Kafka to main table
+CREATE MATERIALIZED VIEW IF NOT EXISTS default.kafka_to_events_mv TO default.user_events AS
+SELECT 
+    UserID,
+    Action,
+    EventDate,
+FROM default.kafka_user_events; 
+```
 
-| 應用情境          | 說明                                     |
-| ------------- | -------------------------------------- |
-| Web 即時行為分析    | 使用 Kafka 收集點擊流事件，ClickHouse 實時統計分析。    |
-| IoT 大規模感測資料平台 | 透過 Kafka 將設備資料流式傳輸進 ClickHouse，支援即時監測。 |
-| APM 監控與異常偵測平台 | 將應用日誌與指標流式處理至 ClickHouse，實現秒級可視化。      |
+### `kafka_producer.py`
 
+```py
+import json
+import time
+from kafka import KafkaProducer
+from datetime import datetime
+import random
+
+# Kafka Config
+KAFKA_BROKER = 'localhost:9092'
+TOPIC = 'user_events_topic'
+
+# Initialize Kafka Producer
+producer = KafkaProducer(
+    bootstrap_servers=[KAFKA_BROKER],
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+)
+
+# Generate Random Events
+def generate_event():
+    return {
+        "EventDate": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        "UserID": random.randint(0, 10),
+        "Action": random.choice(["click", "view", "purchase"]),
+        "Version": 1
+    }
+
+# Produce Events Continuously
+def produce():
+    print("Starting Kafka Producer...")
+    try:
+        while True:
+            event = generate_event()
+            producer.send(TOPIC, value=event)
+            producer.flush() # NOTEICED: it'll be cache default, so we flush it
+            print(f"Produced: {event}")
+            time.sleep(1)  # Send 1 message per second (adjust as needed)
+    except KeyboardInterrupt:
+        print("Stopped Producer.")
+    finally:
+        producer.close()
+
+if __name__ == "__main__":
+    produce()
+```
+
+* 每秒送出一筆事件資料到 Kafka。
+* `producer.flush()` 確保訊息立即送出（預設會暫存）。
+* `time.sleep(1)` 控制發送頻率，可改成更快或更慢。
+
+### clickhouse_query.py
+
+```py
+import clickhouse_connect
+
+# ClickHouse Config
+CLICKHOUSE_HOST = 'localhost'
+CLICKHOUSE_PORT = 8123
+
+def connect_clickhouse():
+    """connect to ClickHouse"""
+    try:
+        client = clickhouse_connect.get_client(
+            host=CLICKHOUSE_HOST,
+            port=CLICKHOUSE_PORT,
+            username='default',
+            password='default'
+        )
+        print("connected to ClickHouse!")
+        return client
+    except Exception as e:
+        print(f"connect to ClickHouse failed: {e}")
+        return None
+
+def check_tables(client):
+    """check tables"""
+    try:
+        result = client.query("SHOW TABLES")
+        print("existing tables:")
+        for row in result.result_rows:
+            print(f"  - {row[0]}")
+        return True
+    except Exception as e:
+        print(f"check tables failed: {e}")
+        return False
+
+def query_data(client):
+    """query data"""
+    try:
+        # query total records
+        count_result = client.query("SELECT COUNT(*) FROM default.user_events")
+        total_count = count_result.result_rows[0][0]
+        print(f"\ntotal records: {total_count}")
+        
+        if total_count > 0:
+            # query recent 10 records
+            recent_result = client.query("""
+                SELECT EventDate, UserID, Action 
+                FROM default.user_events 
+                ORDER BY EventDate DESC 
+                LIMIT 10
+            """)
+            
+            print("\nrecent 10 records:")
+            print("-" * 60)
+            for row in recent_result.result_rows:
+                print(f"  {row[0]} | UserID: {row[1]} | Action: {row[2]}")
+        
+        # group by Action
+        action_stats = client.query("""
+            SELECT Action, COUNT(*) as count 
+            FROM default.user_events 
+            GROUP BY Action 
+            ORDER BY count DESC
+        """)
+        
+        print("\ngroup by Action:")
+        print("-" * 30)
+        for row in action_stats.result_rows:
+            print(f"  {row[0]}: {row[1]} records")
+            
+    except Exception as e:
+        print(f"query data failed: {e}")
+
+def main():
+    print("ClickHouse data query tool")
+    print("=" * 40)
+    
+    client = connect_clickhouse()
+    if client:
+        check_tables(client)
+        query_data(client)
+        client.close()
+
+if __name__ == "__main__":
+    main() 
+```
+
+* 預設使用 HTTP port 8123
+* 用戶名稱與密碼皆為 default，若 ClickHouse 有啟用 RBAC，這邊要對應調整
+
+:::note
+我們會在後面的文章中講到 RBAC
+:::
+
+接著我們使用 SQL Query 取得被 MV 轉發的資料。
+
+```sql
+-- 查詢最近 10 筆
+SELECT EventDate, UserID, Action 
+FROM default.user_events 
+ORDER BY EventDate DESC 
+LIMIT 10
+
+-- Group by 統計
+SELECT Action, COUNT(*) 
+FROM default.user_events 
+GROUP BY Action 
+ORDER BY count DESC
+```
 
 ## 結語
 
-ClickHouse 與 Kafka 的整合，使我們能夠在毫秒級時間內，將龐大的事件資料流進行存儲、轉換與查詢分析。
+ClickHouse 與 Kafka 的整合，使我們能夠在毫秒級時間內，將龐大的事件資料流進行儲存、轉換與查詢分析。
 透過 Materialized View 與 Kafka Engine，從資料進來到 BI 報表呈現，整個過程都能保持高效能且可擴展的設計。
 
 ### ClickHouse 系列持續更新中:
@@ -238,4 +400,4 @@ ClickHouse 與 Kafka 的整合，使我們能夠在毫秒級時間內，將龐�
 27. [ClickHouse 系列：與 BI 工具整合（Metabase、Superset、Power BI）](https://blog.vicwen.app/posts/clickhouse-bi-integration/)
 28. [ClickHouse 系列：ClickHouse Cloud 與自建部署的優劣比較](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
 29. [ClickHouse 系列：資料庫安全性與權限管理（RBAC）實作](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
-30. [ClickHouse 系列：ClickHouse 發展藍圖與 2025 版本新功能預測](https://blog.vicwen.app/posts/clickhouse-roadmap-2025/)
+
