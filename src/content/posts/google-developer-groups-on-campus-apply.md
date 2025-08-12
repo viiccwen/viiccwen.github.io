@@ -2,7 +2,7 @@
 title: Google 學生社團在做什麼？我該如何申請？ - 讓 GDG on Campus 現任 Lead 帶你了解吧！
 published: 2025-01-25
 description: ''
-image: '../../assets/posts/google-developer-groups-on-campus-apply.jpg'
+image: '../../assets/posts/google-developer-groups-on-campus-apply/google-developer-groups-on-campus-apply.jpg'
 tags: [GDGoC]
 category: '紀錄 & 心得'
 draft: false 
@@ -39,6 +39,10 @@ GDG on Campus 的前身是 Google Developer Student Clubs，它的核心理念�
 **1. 接觸最新技術與資源**
 
 你將有機會接觸 Google 的官方資源，例如免費的技術認證考試機會或每年一度的 Cloud Study Jam，2024 我們社群便有超過 5 位拿到最高等級獎勵（Google 書包、水壺、貼紙）。
+
+今年卸任更免費獲得了一年的開發者計畫（價值 299 鎂）
+
+![Benefit](../../assets/posts/google-developer-groups-on-campus-apply/Google%20Benefit.png)
 
 **2. 拓展人脈，連結未來**
 
