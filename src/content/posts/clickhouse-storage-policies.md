@@ -20,7 +20,7 @@ Storage Policies 是 ClickHouse 內部管理資料儲存位置與分層邏輯的
 2. 根據 Data Part 大小動態調度存儲位置。
 3. 搭配 TTL 策略，實現資料生命週期全自動管理。
 
-## 二、Storage Policies 結構
+## Storage Policies 結構
 
 ```xml
 <storage_configuration>
@@ -57,7 +57,7 @@ Storage Policies 是 ClickHouse 內部管理資料儲存位置與分層邏輯的
 </storage_configuration>
 ```
 
-## 三、磁碟分層（Volumes）設計原則
+## 磁碟分層（Volumes）設計原則
 
 | 層級          | 磁碟類型 | 適用資料            | 說明               |
 | ----------- | ---- | --------------- | ---------------- |
