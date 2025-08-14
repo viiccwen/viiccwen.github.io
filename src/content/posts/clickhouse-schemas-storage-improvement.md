@@ -1,6 +1,6 @@
 ---
 title: ClickHouse 系列：表格設計與儲存優化細節
-published: 2025-08-14
+published: 2025-08-26
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
 tags: [ClickHouse, Database, 鐵人賽]
