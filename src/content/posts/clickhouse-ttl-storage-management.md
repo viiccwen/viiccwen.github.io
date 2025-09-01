@@ -168,7 +168,6 @@ SELECT * FROM system.part_log WHERE event_type = 'MergeParts' AND table = 'event
 TTL 不只是過期資料清理，更是**控制 ClickHouse 儲存資源分層 (SSD → HDD → S3)** 的重要利器。適當設計 TTL 策略，能幫助你在效能與成本之間取得最佳平衡。（老闆也會很愛你的）
 
 ### ClickHouse 系列持續更新中:
-
 1. [ClickHouse 系列：ClickHouse 是什麼？與傳統 OLAP/OLTP 資料庫的差異](https://blog.vicwen.app/posts/what-is-clickhouse/)
 2. [ClickHouse 系列：ClickHouse 為什麼選擇 Column-based 儲存？講解 Row-based 與 Column-based 的核心差異](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)
 3. [ClickHouse 系列：ClickHouse 儲存引擎 - MergeTree](https://blog.vicwen.app/posts/clickhouse-mergetree-engine)
@@ -197,5 +196,5 @@ TTL 不只是過期資料清理，更是**控制 ClickHouse 儲存資源分層 (
 26. [ClickHouse 系列：與 BI 工具整合（Power BI）](https://blog.vicwen.app/posts/clickhouse-bi-integration/)
 27. [ClickHouse 系列：ClickHouse Cloud 與自建部署的優劣比較](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
 28. [ClickHouse 系列：資料庫安全性與權限管理（RBAC）實作](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
-
-
+29. [ClickHouse 系列：Kubernetes 部署分散式架構](https://blog.vicwen.app/posts/clickhouse-operator-kubernates/)
+30. [ClickHouse 系列：從原始碼看 MergeTree 的七大核心機制](https://blog.vicwen.app/posts/clickhouse-mergetree-sourcecode-introduction/)
