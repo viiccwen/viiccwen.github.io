@@ -143,4 +143,4 @@ Projections 是 ClickHouse 針對大規模聚合查詢加速的核心武器，�
 27. [ClickHouse 系列：ClickHouse Cloud 與自建部署的優劣比較](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
 28. [ClickHouse 系列：資料庫安全性與權限管理（RBAC）實作](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
 29. [ClickHouse 系列：Kubernetes 部署分散式架構](https://blog.vicwen.app/posts/clickhouse-operator-kubernates/)
-30. [ClickHouse 系列：從原始碼看 MergeTree 的七大核心機制](https://blog.vicwen.app/posts/clickhouse-mergetree-sourcecode-introduction/)
+30. [ClickHouse 系列：從原始碼看 MergeTree 的六大核心機制](https://blog.vicwen.app/posts/clickhouse-mergetree-sourcecode-introduction/)

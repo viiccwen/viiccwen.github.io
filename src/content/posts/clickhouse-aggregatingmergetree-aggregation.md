@@ -36,7 +36,6 @@ AggregatingMergeTree 是 ClickHouse MergeTree 家族中的「聚合專用儲存�
 #### 建立 Source Table, AggregatingMergeTree Table, MV Table：
 
 ```sql
-
 -- Source Table
 CREATE TABLE visits (
     StartDate DateTime64 NOT NULL,
@@ -49,8 +48,8 @@ CREATE TABLE visits (
 CREATE TABLE agg_visits (
     StartDate DateTime64 NOT NULL,
     CounterID UInt64,
-    Visits AggregateFunction(sum, Int32),
-    Users AggregateFunction(uniqExact, Int32)
+    Visits AggregateFunction(sum, Nullable(Int32)),
+    Users AggregateFunction(uniq, Nullable(Int32))
 )
 ENGINE = AggregatingMergeTree()
 ORDER BY (StartDate, CounterID);
@@ -82,7 +81,7 @@ SELECT
     StartDate,
     sumMerge(Visits) AS Visits,
     uniqMerge(Users) AS Users
-FROM test.visits_mv
+FROM agg_visits
 GROUP BY StartDate
 ORDER BY StartDate;
 ```
@@ -220,4 +219,4 @@ FROM visits;
 27. [ClickHouse 系列：ClickHouse Cloud 與自建部署的優劣比較](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
 28. [ClickHouse 系列：資料庫安全性與權限管理（RBAC）實作](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
 29. [ClickHouse 系列：Kubernetes 部署分散式架構](https://blog.vicwen.app/posts/clickhouse-operator-kubernates/)
-30. [ClickHouse 系列：從原始碼看 MergeTree 的七大核心機制](https://blog.vicwen.app/posts/clickhouse-mergetree-sourcecode-introduction/)
+30. [ClickHouse 系列：從原始碼看 MergeTree 的六大核心機制](https://blog.vicwen.app/posts/clickhouse-mergetree-sourcecode-introduction/)
