@@ -2,6 +2,7 @@
 
 
 * [NTU AI Club '26 Tech Staff](https://www.instagram.com/ntuaiclub/)
+* [NTU FinTech Club '26 Tech Staff](https://www.instagram.com/ntu_fc/)
 * [NTUST Google Developer Groups On Campus 24' 25' Lead](https://gdg.community.dev/gdg-on-campus-national-taiwan-university-of-science-and-technology-taipei-taiwan/)
 * [NTUST Computer Science Student Association 24' 25' President](https://www.instagram.com/ntustcsie/)
 
