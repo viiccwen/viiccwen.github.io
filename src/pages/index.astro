@@ -1,3 +1,42 @@
 ---
-return Astro.redirect("/zh-tw/");
+const defaultTarget = "/zh-tw/";
+const englishTarget = "/en/";
 ---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="noindex" />
+		<link rel="canonical" href={defaultTarget} />
+		<title></title>
+		<style is:inline>
+			html,
+			body {
+				margin: 0;
+				width: 100%;
+				height: 100%;
+				background: #fff;
+			}
+		</style>
+		<script is:inline define:vars={{ defaultTarget, englishTarget }}>
+			const preferredLanguages = navigator.languages ?? [navigator.language];
+			const target =
+				preferredLanguages
+					.map((language) => language.toLowerCase())
+					.find(
+						(language) =>
+							language.startsWith("zh") || language.startsWith("en"),
+					)
+					?.startsWith("en")
+					? englishTarget
+					: defaultTarget;
+
+			window.location.replace(target);
+		</script>
+		<noscript>
+			<meta http-equiv="refresh" content={`0;url=${defaultTarget}`} />
+		</noscript>
+	</head>
+	<body></body>
+</html>
