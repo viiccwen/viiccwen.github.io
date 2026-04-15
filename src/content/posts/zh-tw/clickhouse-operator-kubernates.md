@@ -64,7 +64,7 @@ ClickHouse Operator 是由 [Altinity](https://github.com/Altinity) 與開源社�
 
 架構圖示例：
 
-![Zookeeper Clickhouse Structure](../../assets/posts/clickhouse-operator-kubernates/zookeeper-clickhouse-strcture.png)
+![Zookeeper Clickhouse Structure](../../../assets/posts/clickhouse-operator-kubernates/zookeeper-clickhouse-strcture.png)
 
 > 圖好像有點大...
 

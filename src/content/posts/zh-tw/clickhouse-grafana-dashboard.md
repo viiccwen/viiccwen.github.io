@@ -51,7 +51,7 @@ Grafana 作為前端查詢與呈現工具，透過 ClickHouse Plugin 連接 Clic
 
 ### 2. 設定資料來源
 
-![Configure Datasource](../../assets/posts/clickhouse-grafana-dashboard/configure-datasource.png)
+![Configure Datasource](../../../assets/posts/clickhouse-grafana-dashboard/configure-datasource.png)
 
 進入 Grafana UI：
 

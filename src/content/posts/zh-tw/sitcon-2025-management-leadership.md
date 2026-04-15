@@ -2,7 +2,7 @@
 title: SITCON 2025 - 從「經營」到「領導」：社群領導經驗分享
 published: 2025-03-08
 description: ''
-image: '../../assets/posts/sitcon-2025-management-leadership.png'
+image: '../../../assets/posts/sitcon-2025-management-leadership.png'
 tags: [SITCON, Leadership]
 category: '演講'
 draft: false 

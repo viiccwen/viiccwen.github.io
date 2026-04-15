@@ -784,7 +784,7 @@ catch (...)
 
 終於這系列迎來了一個結束，跟我的暑期實習一起畢業了 XD（沒啦，開學後還會繼續做），希望各位喜歡這系列文章。
 
-![](../../assets/posts/clickhouse-mergetree-sourcecode-introduction.png)
+![](../../../assets/posts/clickhouse-mergetree-sourcecode-introduction.png)
 
 之前有人問我：「Vic，你為什麼想開始鐵人賽」。當初覺得透過鐵人賽壓力讓自己快速深入一個服務，而且查閱了市面上很少人做 ClickHouse 相關的文章，就算有也只是講應用居多，我可以說是第一個開始提及底層原理和架構，可能客群都是資料科學家，很少我這種後端工程師會專注於這個）？
 

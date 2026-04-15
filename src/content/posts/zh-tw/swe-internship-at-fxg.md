@@ -2,7 +2,7 @@
 title: 【SWE 實習回顧】在 FXG 的那些時光
 published: 2026-02-28
 description: ''
-image: '../../assets/posts/fxg-internship-at-fxg.jpg'
+image: '../../../assets/posts/fxg-internship-at-fxg.jpg'
 tags: ['internship']
 category: '紀錄 & 心得'
 draft: false 

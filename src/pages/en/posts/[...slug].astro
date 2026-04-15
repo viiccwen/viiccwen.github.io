@@ -1,0 +1,16 @@
+---
+import PostEntryPage from "@components/pages/PostEntryPage.astro";
+import { getPostSlug, getSortedPosts } from "@utils/content-utils";
+
+export async function getStaticPaths() {
+	const blogEntries = await getSortedPosts("en");
+	return blogEntries.map((entry) => ({
+		params: { slug: getPostSlug(entry.id) },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+---
+
+<PostEntryPage entry={entry} locale="en"></PostEntryPage>

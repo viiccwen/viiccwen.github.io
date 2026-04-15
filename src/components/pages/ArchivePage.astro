@@ -1,0 +1,21 @@
+---
+import ArchivePanel from "@components/ArchivePanel.svelte";
+import I18nKey from "@i18n/i18nKey";
+import { type SupportedLocale } from "@i18n/locales";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import type { PostForList } from "@utils/content-utils";
+
+const { sortedPostsList, locale } = Astro.props as {
+	sortedPostsList: PostForList[];
+	locale: SupportedLocale;
+};
+---
+
+<MainGridLayout title={i18n(I18nKey.archive, locale)} locale={locale}>
+	<ArchivePanel
+		sortedPosts={sortedPostsList}
+		locale={locale}
+		client:only="svelte"
+	></ArchivePanel>
+</MainGridLayout>

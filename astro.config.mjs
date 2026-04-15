@@ -28,6 +28,13 @@ import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-cop
 export default defineConfig({
 	site: "https://vicwen.app/",
 	trailingSlash: "always",
+	i18n: {
+		locales: ["zh-tw", "en"],
+		defaultLocale: "zh-tw",
+		routing: {
+			prefixDefaultLocale: true,
+		},
+	},
 	integrations: [
 		tailwind({
 			nesting: true,

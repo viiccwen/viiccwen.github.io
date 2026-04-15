@@ -2,7 +2,7 @@
 title: 台科電資學院暨校園傑出青年申請歷程
 published: 2025-08-03
 description: ''
-image: '../../assets/posts/outstanding-young-persons-experience/image.jpg'
+image: '../../../assets/posts/outstanding-young-persons-experience/image.jpg'
 tags: [傑出青年]
 category: '紀錄 & 心得'
 draft: false 
@@ -102,4 +102,4 @@ lang: ''
 
 最後用當天面試校傑出的照片結束這個回憶吧~
 
-![](../../assets/posts/outstanding-young-persons-experience/photo.jpg)
+![](../../../assets/posts/outstanding-young-persons-experience/photo.jpg)

@@ -1,7 +1,8 @@
 ---
+import { DEFAULT_LOCALE, type SupportedLocale } from "@i18n/locales";
 import { Icon } from "astro-icon/components";
 import { navBarConfig, siteConfig } from "../config";
-import { LinkPresets } from "../constants/link-presets";
+import { getLinkPresets } from "../constants/link-presets";
 import { LinkPreset, type NavBarLink } from "../types/config";
 import { url } from "../utils/url-utils";
 import LightDarkSwitch from "./LightDarkSwitch.svelte";
@@ -10,11 +11,15 @@ import DisplaySettings from "./widget/DisplaySettings.svelte";
 import NavMenuPanel from "./widget/NavMenuPanel.astro";
 
 const className = Astro.props.class;
+const { locale = DEFAULT_LOCALE } = Astro.props as {
+	locale?: SupportedLocale;
+};
+const linkPresets = getLinkPresets(locale);
 
 let links: NavBarLink[] = navBarConfig.links.map(
 	(item: NavBarLink | LinkPreset): NavBarLink => {
 		if (typeof item === "number") {
-			return LinkPresets[item];
+			return linkPresets[item];
 		}
 		return item;
 	},
@@ -25,7 +30,7 @@ let links: NavBarLink[] = navBarConfig.links.map(
     <div class:list={[
         className,
         "card-base !overflow-visible max-w-[var(--page-width)] h-[4.5rem] !rounded-t-none mx-auto flex items-center justify-between px-4"]}>
-        <a href={url('/')} class="btn-plain scale-animation rounded-lg h-[3.25rem] px-5 font-bold active:scale-95">
+        <a href={url("/", locale)} class="btn-plain scale-animation rounded-lg h-[3.25rem] px-5 font-bold active:scale-95">
             <div class="flex flex-row text-[var(--primary)] items-center text-md">
                 <Icon name="material-symbols:home-outline-rounded" class="text-[1.75rem] mb-1 mr-2" />
                 {siteConfig.title}
@@ -33,7 +38,7 @@ let links: NavBarLink[] = navBarConfig.links.map(
         </a>
         <div class="hidden md:flex">
             {links.map((l) => {
-                return <a aria-label={l.name} href={l.external ? l.url : url(l.url)} target={l.external ? "_blank" : null}
+                return <a aria-label={l.name} href={l.url} target={l.external ? "_blank" : null}
                           class="btn-plain scale-animation rounded-lg h-11 font-bold px-5 active:scale-95"
                 >
                     <div class="flex items-center">
@@ -45,7 +50,7 @@ let links: NavBarLink[] = navBarConfig.links.map(
         </div>
         <div class="flex">
             <!--<SearchPanel client:load>-->
-            <Search client:only="svelte"></Search>
+            <Search client:only="svelte" locale={locale}></Search>
             {!siteConfig.themeColor.fixed && (
                     <button aria-label="Display Settings" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90" id="display-settings-switch">
                         <Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
@@ -57,7 +62,7 @@ let links: NavBarLink[] = navBarConfig.links.map(
             </button>
         </div>
         <NavMenuPanel links={links}></NavMenuPanel>
-        <DisplaySettings client:only="svelte"></DisplaySettings>
+        <DisplaySettings client:only="svelte" locale={locale}></DisplaySettings>
     </div>
 </div>
 

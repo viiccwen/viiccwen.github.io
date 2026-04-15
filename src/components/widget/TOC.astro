@@ -1,4 +1,5 @@
 ---
+import { DEFAULT_LOCALE, type SupportedLocale } from "@i18n/locales";
 import type { MarkdownHeading } from "astro";
 import { siteConfig } from "../../config";
 import { url } from "../../utils/url-utils";
@@ -6,9 +7,13 @@ import { url } from "../../utils/url-utils";
 interface Props {
 	class?: string;
 	headings: MarkdownHeading[];
+	locale?: SupportedLocale;
 }
 
-let { headings = [] } = Astro.props;
+let { headings = [], locale = DEFAULT_LOCALE } = Astro.props as {
+	headings: MarkdownHeading[];
+	locale?: SupportedLocale;
+};
 
 let minDepth = 10;
 for (const heading of headings) {
@@ -16,7 +21,7 @@ for (const heading of headings) {
 }
 
 const className = Astro.props.class;
-const isPostsRoute = Astro.url.pathname.startsWith(url("/posts/"));
+const isPostsRoute = Astro.url.pathname.startsWith(url("/posts/", locale));
 
 const removeTailingHash = (text: string) => {
 	let lastIndexOfHash = text.lastIndexOf("#");

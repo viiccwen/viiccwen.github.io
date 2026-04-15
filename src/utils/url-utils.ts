@@ -1,4 +1,5 @@
 import I18nKey from "@i18n/i18nKey";
+import { DEFAULT_LOCALE, type SupportedLocale } from "@i18n/locales";
 import { i18n } from "@i18n/translation";
 
 export function pathsEqual(path1: string, path2: string) {
@@ -12,23 +13,36 @@ function joinUrl(...parts: string[]): string {
 	return joined.replace(/\/+/g, "/");
 }
 
-export function getPostUrlBySlug(slug: string): string {
-	return url(`/posts/${slug}/`);
+export function getPostUrlBySlug(
+	slug: string,
+	locale: SupportedLocale = DEFAULT_LOCALE,
+): string {
+	return url(`/posts/${slug}/`, locale);
 }
 
-export function getTagUrl(tag: string): string {
-	if (!tag) return url("/archive/");
-	return url(`/archive/?tag=${encodeURIComponent(tag.trim())}`);
+export function getTagUrl(
+	tag: string,
+	locale: SupportedLocale = DEFAULT_LOCALE,
+): string {
+	if (!tag) return url("/archive/", locale);
+	return url(`/archive/?tag=${encodeURIComponent(tag.trim())}`, locale);
 }
 
-export function getCategoryUrl(category: string | null): string {
+export function getCategoryUrl(
+	category: string | null,
+	locale: SupportedLocale = DEFAULT_LOCALE,
+): string {
 	if (
 		!category ||
 		category.trim() === "" ||
-		category.trim().toLowerCase() === i18n(I18nKey.uncategorized).toLowerCase()
+		category.trim().toLowerCase() ===
+			i18n(I18nKey.uncategorized, locale).toLowerCase()
 	)
-		return url("/archive/?uncategorized=true");
-	return url(`/archive/?category=${encodeURIComponent(category.trim())}`);
+		return url("/archive/?uncategorized=true", locale);
+	return url(
+		`/archive/?category=${encodeURIComponent(category.trim())}`,
+		locale,
+	);
 }
 
 export function getDir(path: string): string {
@@ -39,6 +53,12 @@ export function getDir(path: string): string {
 	return path.substring(0, lastSlashIndex + 1);
 }
 
-export function url(path: string) {
-	return joinUrl("", import.meta.env.BASE_URL, path);
+export function url(path: string, locale?: SupportedLocale) {
+	const trimmedPath = path.startsWith("/") ? path.slice(1) : path;
+	return joinUrl(
+		"",
+		import.meta.env.BASE_URL,
+		...(locale ? [locale] : []),
+		trimmedPath,
+	);
 }
