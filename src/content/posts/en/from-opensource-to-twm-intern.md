@@ -2,7 +2,7 @@
 title: "From GitHub to Offer: How Open Source Helped Me Land an Internship"
 published: 2026-04-15
 description: ""
-image: "../../../assets/posts/from-opensource-to-twm-intern/taiwan-mobile.webp"
+image: "../../../assets/posts/from-opensource-to-twm-intern/alc-taipei.webp"
 tags: ["internship", "opensource"]
 category: "Open Source"
 draft: false
