@@ -9,7 +9,7 @@ draft: false
 lang: 'en'
 ---
 
-As data volumes continue to grow, **how to optimize query performance** becomes a core skill every developer needs to have. This article walks through two powerful ClickHouse tools for query optimization:
+As data volumes continue to grow, optimizing query performance becomes a core skill every developer needs to have. This article walks through two powerful ClickHouse tools for query optimization:
 
 1. **system.query\_log** → query execution history and performance
 2. **EXPLAIN** → estimated query paths and resource usage
@@ -131,7 +131,7 @@ QUERY id: 0
     TABLE id: 3, table_name: default.test_table
 ```
 
-This makes it clear how the query will join tables and which columns will be projected.
+This makes it clear how the query is structured and which columns will be projected.
 
 ### PLAN - Execution Plan Steps
 
@@ -233,7 +233,9 @@ LIMIT 1;
 query_duration_ms: 300ms
 ```
 
-> `4500ms` -> `300ms` (Nice Try Diddy)
+> `4500ms` -> `300ms`
+>
+> A 15x improvement.
 
 ## Advanced: Optimizing a Global Scan
 
@@ -241,7 +243,7 @@ query_duration_ms: 300ms
 SELECT user_id, COUNT(*) FROM user_events GROUP BY user_id;
 ```
 
-1. Run `EXPLAIN PLAN` → confirm whether the Primary Key Index is being used.
+1. Run `EXPLAIN PLAN` to confirm whether the Primary Key index is being used.
 
 ```sql
 EXPLAIN PLAN SELECT user_id, COUNT(*) FROM user_events GROUP BY user_id;

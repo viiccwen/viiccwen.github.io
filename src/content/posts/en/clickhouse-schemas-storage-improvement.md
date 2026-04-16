@@ -127,7 +127,7 @@ ORDER BY (EventDate, UserID);
 
 Table design is the first step in ClickHouse cost optimization and performance tuning.
 
-By choosing column properties wisely, such as `DEFAULT`, type selection, `LowCardinality`, and `CODEC`, you can **save several times the storage space** on the same hardware and significantly improve query speed.
+By choosing column properties wisely, such as `DEFAULT`, type selection, `LowCardinality`, and `CODEC`, you can **save several times as much storage space** on the same hardware and significantly improve query speed.
 
 ### ClickHouse Series Updates:
 1. [ClickHouse Series: What Is ClickHouse? How It Differs from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)

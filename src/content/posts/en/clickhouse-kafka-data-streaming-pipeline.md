@@ -12,7 +12,7 @@ lang: 'en'
 In large-scale data scenarios, companies increasingly need architecture that can **process and analyze streaming data in real time**.
 Because ClickHouse integrates naturally with Kafka, it provides a high-performance **Event Streaming → Real-Time Analytics** data pipeline, letting data move from production to analysis with only **second-level latency**.
 
-Today, we will use a project to walk through a real-time Kafka + ClickHouse streaming pipeline. You can start by cloning the [repository](https://github.com/viiccwen/kafka-clickhouse-data-streaming-pipeline), and the rest of this article will use the files in that project as examples.
+Today, we'll walk through a real-time Kafka + ClickHouse streaming pipeline using a project as the example. You can start by cloning the [repository](https://github.com/viiccwen/kafka-clickhouse-data-streaming-pipeline), and the rest of this article will use the files in that project as reference.
 
 
 ## Architecture Overview: Kafka + ClickHouse Data Streaming Pipeline
@@ -237,7 +237,7 @@ def produce():
         while True:
             event = generate_event()
             producer.send(TOPIC, value=event)
-            producer.flush() # NOTEICED: it'll be cache default, so we flush it
+            producer.flush()  # The producer buffers messages by default, so flush after each send.
             print(f"Produced: {event}")
             time.sleep(1)  # Send 1 message per second (adjust as needed)
     except KeyboardInterrupt:
@@ -369,7 +369,7 @@ ORDER BY count DESC
 The integration between ClickHouse and Kafka makes it possible to store, transform, and analyze large event streams with very low latency.
 By combining Materialized Views and Kafka Engine, the entire path from ingestion to BI reporting can remain both high-performance and scalable.
 
-### More ClickHouse Series Posts Coming:
+### More Posts in This Series:
 
 1. [ClickHouse Series: What Is ClickHouse? Differences from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
 2. [ClickHouse Series: Why ClickHouse Uses Column-Based Storage? A Core Comparison of Row-Based and Column-Based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)

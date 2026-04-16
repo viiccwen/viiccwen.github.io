@@ -61,7 +61,7 @@ SAMPLE BY intHash32(UserID);
 
 This means that when multiple versions of the same row exist, based on the Primary Key, ClickHouse keeps the row with the largest `ver` value as the final result. Deduplication happens during Merge.
 
-> What, forgot already? Go back and read this first: [ClickHouse Series: ReplacingMergeTree and the Data Deduplication Mechanism](https://blog.vicwen.app/posts/clickhouse-replacingmergetree-deduplication/) 🫵
+> If this part feels fuzzy, revisit this first: [ClickHouse Series: ReplacingMergeTree and the Data Deduplication Mechanism](https://blog.vicwen.app/posts/clickhouse-replacingmergetree-deduplication/)
 
 | Parameter                                        | Description                                                                 |
 | ------------------------------------------------ | --------------------------------------------------------------------------- |
@@ -201,7 +201,7 @@ Or, if you use ClickHouse Keeper:
 
 * Every Replicated Table has a path in ZooKeeper/Keeper for coordinating replica state and synchronization.
 * If `config.xml` does not define a ZooKeeper/Keeper connection, Replicated Tables cannot be created, and existing Replicated Tables become read-only.
-* You can use one ZooKeeper cluster to coordinate replicas across multiple shards, and even in large clusters with 300+ nodes, splitting the ZooKeeper cluster is generally still unnecessary because ClickHouse's coordination model is already effective.
+* You can use one ZooKeeper cluster to coordinate replicas across multiple shards, and even in large clusters with 300+ nodes, splitting ZooKeeper into multiple clusters is usually unnecessary because ClickHouse's coordination model is already effective.
 
 ### 2. **Replication does not affect `SELECT` performance**
 
@@ -237,7 +237,7 @@ So the better approach is still to batch data into larger writes, for example on
 * Merge operations happen independently on each replica, but the order and results remain consistent because Keeper coordinates them.
 * This greatly reduces network traffic and allows efficient operation even across data centers.
 
-### 6. **By default, `INSERT` waits for only one replica to succeed (not quorum write)**
+### 6. **By default, `INSERT` waits for only one replica to succeed, not a quorum write**
 
 * By default, an `INSERT` returns success as soon as one replica confirms the write.
 * That means if that replica later fails permanently, the write may be lost.
@@ -277,7 +277,7 @@ With ClickHouse Replicated Tables, we can achieve data consistency, balanced que
 For data platforms that combine high-ingest writes, large-scale queries, and strict availability requirements, this is a core architectural building block.
 
 
-### More ClickHouse Series Posts Coming:
+### More Posts in This Series:
 
 1. [ClickHouse Series: What Is ClickHouse? Differences from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
 2. [ClickHouse Series: Why ClickHouse Uses Column-Based Storage? A Core Comparison of Row-Based and Column-Based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)

@@ -9,7 +9,7 @@ draft: false
 lang: "en"
 ---
 
-When handling large-scale aggregate queries, ClickHouse has more than just Partition Pruning and Data Skipping Indexes to speed things up (~~if you forgot them, go review them again~~). There is another very powerful query optimization weapon: **Projections**.
+When handling large-scale aggregate queries, ClickHouse has more than just Partition Pruning and Data Skipping Indexes to speed things up (~~if you've forgotten them, go review them again~~). There is another powerful query optimization tool: **Projections**.
 
 Projections can pre-sort, pre-aggregate, or reorganize data structures so that the query execution path becomes **shorter and faster**.
 
@@ -19,8 +19,8 @@ A Projection is an internal materialized structure stored inside table parts. It
 
 | Feature               | Description                                               |
 | --------------------- | --------------------------------------------------------- |
-| Part of the table     | Projection data lives together with the table in the same data part. |
-| Automatically used at query time | You do not need to change the query syntax. ClickHouse automatically chooses the projection with the smallest scan cost. |
+| Part of the table     | Projection data lives with the table in the same data part. |
+| Automatically used at query time | You do not need to change the query syntax. ClickHouse automatically chooses the projection with the lowest scan cost. |
 | Multiple projections supported | You can define different projections for different query needs. |
 
 
@@ -59,7 +59,7 @@ ADD PROJECTION daily_user_action_counts
 );
 ```
 
-After running `OPTIMIZE TABLE user_events FINAL`, ClickHouse will write the projection data into the table parts in the background.
+After running `OPTIMIZE TABLE user_events FINAL`, ClickHouse writes the projection data into the table parts in the background.
 
 ## Projection Hits Automatically at Query Time
 
@@ -109,10 +109,10 @@ This kind of workload is especially suitable for BI reports and high-frequency a
 
 Projections are one of ClickHouse's core tools for accelerating large-scale aggregation queries. With a well-designed projection, you can instantly improve query performance by several times.
 
-For reporting and real-time dashboard scenarios, using Projections wisely can significantly reduce system load and query latency, making them a key weapon in big data analytics.
+For reporting and real-time dashboard scenarios, using Projections wisely can significantly reduce system load and query latency, making them a useful tool in big-data analytics.
 
 
-### ClickHouse Series Continues:
+### More Posts in This Series:
 
 1. [ClickHouse Series: What Is ClickHouse? How It Differs from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
 2. [ClickHouse Series: Why ClickHouse Uses Column-Based Storage? Core Differences Between Row-Based and Column-Based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)
@@ -123,7 +123,7 @@ For reporting and real-time dashboard scenarios, using Projections wisely can si
 7. [ClickHouse Series: Real-Time Aggregation with Materialized Views](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partition Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
 9. [ClickHouse Series: Primary Key, Sorting Key, and How Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
-10. [ClickHouse Series: Best Practices for CollapsingMergeTree and Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
+10. [ClickHouse Series: Best Practices for CollapsingMergeTree and Logical Deletes](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree and Data Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)
 13. [ClickHouse Series: Distributed Tables and Distributed Query Architecture](https://blog.vicwen.app/posts/clickhouse-distributed-table-architecture/)
@@ -134,13 +134,13 @@ For reporting and real-time dashboard scenarios, using Projections wisely can si
 18. [ClickHouse Series: How to Improve Query Performance with system.query_log and EXPLAIN](https://blog.vicwen.app/posts/clickhouse-query-log-explain/)
 19. [ClickHouse Series: Advanced Query Acceleration with Projections](https://blog.vicwen.app/posts/clickhouse-projections-optimization/)
 20. [ClickHouse Series: Sampling Queries and Statistical Techniques](https://blog.vicwen.app/posts/clickhouse-sampling-statistics/)
-21. [ClickHouse Series: TTL-Based Data Cleanup and Storage Cost Optimization](https://blog.vicwen.app/posts/clickhouse-ttl-storage-management/)
+21. [ClickHouse Series: TTL Data Cleanup and Storage Cost Optimization](https://blog.vicwen.app/posts/clickhouse-ttl-storage-management/)
 22. [ClickHouse Series: Storage Policies and Tiered Disk Resource Management](https://blog.vicwen.app/posts/clickhouse-storage-policies/)
 23. [ClickHouse Series: Table Design and Storage Optimization Details](https://blog.vicwen.app/posts/clickhouse-schemas-storage-improvement/)
 24. [ClickHouse Series: Building Visual Monitoring with Grafana](https://blog.vicwen.app/posts/clickhouse-grafana-dashboard/)
 25. [ClickHouse Series: Query Optimization Case Studies](https://blog.vicwen.app/posts/clickhouse-select-optimization/)
 26. [ClickHouse Series: Integrating with BI Tools (Power BI)](https://blog.vicwen.app/posts/clickhouse-bi-integration/)
-27. [ClickHouse Series: ClickHouse Cloud vs Self-Hosted Deployment](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
-28. [ClickHouse Series: Database Security and Access Control (RBAC)](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
+27. [ClickHouse Series: Comparing ClickHouse Cloud and Self-Hosted Deployments](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
+28. [ClickHouse Series: Database Security and RBAC](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
 29. [ClickHouse Series: Deploying a Distributed Architecture on Kubernetes](https://blog.vicwen.app/posts/clickhouse-operator-kubernates/)
 30. [ClickHouse Series: Six Core MergeTree Mechanisms Seen from the Source Code](https://blog.vicwen.app/posts/clickhouse-mergetree-sourcecode-introduction/)

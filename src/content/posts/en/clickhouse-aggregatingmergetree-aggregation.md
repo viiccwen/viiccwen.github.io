@@ -182,13 +182,13 @@ Only when you set `optimize_on_insert` to `0` will ClickHouse skip that insert-t
 
 ### Conclusion
 
-Personally, I think AggregatingMergeTree is a powerful tool for workloads that combine high-ingest writes with complex aggregation. But internally it is genuinely complicated XD, with a lot of moving parts. If you want to choose the right MergeTree engine, you really need a deeper understanding of the related concepts before you can optimize the system well.
+Personally, I think AggregatingMergeTree is a powerful tool for workloads that combine high-ingest writes with complex aggregation. But internally, it is genuinely complicated XD, with a lot of moving parts. If you want to choose the right MergeTree engine, you really need a deeper understanding of the related concepts before you can optimize the system well.
 
-By storing aggregation states in advance through `AggregateFunction`, and pairing that with MergeTree's merge mechanism and the real-time compute ability of Materialized Views, you can push query performance down to the millisecond level. It is a strong fit for dashboards, traffic monitoring, and IoT data aggregation.
+By storing aggregation states in advance through `AggregateFunction`, and pairing that with MergeTree's merge mechanism and the real-time computation power of Materialized Views, you can push query performance down to the millisecond level. It is a strong fit for dashboards, traffic monitoring, and IoT data aggregation.
 
 But you still need to pay close attention to **Primary Key and Partition design** if you want merging and query pruning to perform at their best.
 
-#### More ClickHouse Series Posts Coming:
+### More Posts in This Series:
 
 1. [ClickHouse Series: What Is ClickHouse? Differences from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
 2. [ClickHouse Series: Why ClickHouse Uses Column-Based Storage? A Core Comparison of Row-Based and Column-Based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)

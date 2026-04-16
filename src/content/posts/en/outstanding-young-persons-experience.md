@@ -9,17 +9,17 @@ draft: false
 lang: 'en'
 ---
 
-This post is mainly here to document my experience applying for both the college-level and university-level Outstanding Youth awards, and to leave some preparation ideas behind for the people who come after me~
-If you’re interested in competing for this honor on campus and still have questions after reading this post, feel free to DM me on Instagram. I’ll help answer whatever I can! (Please be polite ✨)
+This post documents my experience applying for both the college-level and university-level Outstanding Youth awards, and leaves behind some preparation ideas for those who come after me~
+If you’re interested in competing for this honor on campus and still have questions after reading this post, feel free to DM me on Instagram. I’ll answer what I can! (Please be polite ✨)
 
 # Why I Wanted to Apply
 
 I applied back in my freshman year. Honestly, Siyuan was the one who said to me, “Hey Vic, Outstanding Youth, want to go for it?”
 And I said, “Sure, let’s pick one.”
 
-There wasn’t any grand dream behind it.
+There was no grand dream behind it.
 
-Then I looked at the eligibility requirements and realized I fit them pretty well, and they matched my experience quite closely, so I decided to run.
+Then I looked at the eligibility requirements and realized I matched them fairly well, and they lined up closely with my own experience, so I decided to go for it.
 
 Personally, I think the Outstanding Youth title is both an honor and a channel that helps you broaden your horizons and meet other outstanding people. And because the school’s selection process is very strict, the university-level award only selects **0.1% (12/12000)** of students, so the competition is very intense.
 
@@ -53,7 +53,7 @@ For my own application, I focused on:
 5. Bringing up my family background
 6. Basically writing down anything I could talk about, though it still had to be something substantial
 
-Because the first stage was the college-level Outstanding Youth selection, the application form was just written in bullet points, so I didn’t deliberately polish my wording too much. The real key was the interview, because that determined whether you got a ticket to the second stage.
+Because the first stage was the college-level Outstanding Youth selection, the application form was just written in bullet points, so I didn’t deliberately polish my wording too much. The real key was the interview, because that determined whether you advanced to the second stage.
 Before the interview, you would also prepare slides, so that’s when you could explain the details more thoroughly in person.
 
 It’s also a good time to think about your own strengths and weaknesses, and how you want to introduce yourself to the committee during the interview.

@@ -9,7 +9,7 @@ draft: false
 lang: "en"
 ---
 
-One of the core secrets behind ClickHouse's high-performance data queries is its powerful storage engine - **MergeTree**. In this article, we will go deep into what MergeTree is, what problems it solves, and how its different variants (ReplacingMergeTree, SummingMergeTree, and others) handle different data processing scenarios.
+One of the main reasons ClickHouse can query data so quickly is its powerful storage engine, **MergeTree**. In this article, we'll go deeper into what MergeTree is, what problems it solves, and how its different variants (ReplacingMergeTree, SummingMergeTree, and others) handle different data processing scenarios.
 
 ## What is MergeTree?
 
@@ -34,7 +34,7 @@ MergeTree is the most fundamental storage engine in ClickHouse. It is responsibl
 3. **Compression**: each column is compressed independently using algorithms such as LZ4 and ZSTD.
 :::
 
-Later, background Merge operations reorganize small parts into larger optimized parts.
+Later, background merges combine small parts into larger, optimized ones.
 
 ![](https://clickhouse.com/docs/assets/ideal-img/merges.285da65.2048.png)
 
@@ -172,7 +172,7 @@ MergeTree is the foundation of ClickHouse's high-performance storage and query c
 6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
 7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
-9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+9. [ClickHouse Series: How Primary Keys, Sorting Keys, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
 10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)

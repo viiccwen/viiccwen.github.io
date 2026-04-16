@@ -1,5 +1,5 @@
 ---
-title: 'ClickHouse Series: Deploying a Distributed Architecture on Kubernetes'
+title: "ClickHouse Series: Deploying a Distributed Architecture on Kubernetes"
 published: 2025-09-02
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
@@ -9,86 +9,85 @@ draft: false
 lang: 'en'
 ---
 
-During the previous 28 days, we explored ClickHouse's internal design in depth, including the MergeTree engine, indexing, query optimization techniques, and the role different engines play in data processing. All of that was from the perspective of a **single machine or a single node**. But once we want to put ClickHouse into a **real production environment** and deal with high concurrency, data growth, and high availability, the deployment strategy becomes very important.
+Over the past 28 days, we have explored ClickHouse's internal design in depth, including the MergeTree engine, indexes, query optimization techniques, and the data-processing use cases of different engines. Those topics mostly came from the perspective of a single machine or single node. But once we want to put ClickHouse into a **real production environment**, deployment strategy becomes critical because of high concurrency, growing data volume, and high-availability requirements.
 
-Traditional deployment methods, such as installing directly on a VM or bare metal, are simple, but they are no longer enough for modern cloud architectures. Kubernetes has become the de facto container orchestration standard, and it brings automation, elasticity, and scalability. The **ClickHouse Operator** makes it much easier to manage a complex ClickHouse cluster on Kubernetes.
+Traditional deployment methods, such as installing directly on a VM or bare metal, are simple, but they are often not enough in modern cloud environments. Kubernetes has become the de facto container orchestration standard, providing automation, scalability, and flexibility. **ClickHouse Operator** makes it much easier to manage complex ClickHouse clusters on Kubernetes.
 
-This article uses minikube and the ClickHouse Operator on a single host to quickly simulate a distributed Kubernetes deployment.
+This article uses minikube and ClickHouse Operator on a single host to simulate a distributed Kubernetes deployment.
 
-## Why deploy ClickHouse on Kubernetes?
+## Why Deploy ClickHouse on Kubernetes?
 
-ClickHouse is already very fast by design, but as the amount of data and the number of users grow, a single node can no longer handle all the load. We need:
+ClickHouse itself is already very fast, but as data volume and user traffic grow, a single node often cannot handle all the load. We need:
 
-* **High availability (HA)**
-  * If a node fails, the system can fail over automatically without interrupting queries.
-* **Horizontal scalability**
-  * When data grows from 100GB to several TB or even PB scale, we can expand the cluster and distribute the load quickly.
+* **High Availability (HA)**
+  * When a node fails, the system can fail over automatically without interrupting queries.
+* **Horizontal Scalability**
+  * When data grows from 100GB to multiple TB or even PB scale, adding nodes should quickly spread the load.
 * **Automated operations**
   * Deployment, upgrades, monitoring, and rolling updates can all be automated through Kubernetes.
 * **Cloud-native integration**
-  * Kubernetes is built around APIs. Monitoring (Prometheus), storage (PVC), and networking (Ingress / Service) can all work smoothly with ClickHouse.
+  * A major Kubernetes advantage is that everything is API-driven. Monitoring (Prometheus), storage (PVC), and networking (Ingress/Service) can all integrate cleanly with ClickHouse.
 
-That is exactly the problem the ClickHouse Operator is designed to solve.
+ClickHouse Operator exists to solve exactly these problems.
 
-## Core concepts of the ClickHouse Operator
+## Core Concepts of ClickHouse Operator
 
-The ClickHouse Operator is a Kubernetes Operator maintained by [Altinity](https://github.com/Altinity) and the open source community: [Altinity/clickhouse-operator](https://github.com/Altinity/clickhouse-operator).
+ClickHouse Operator is a [Kubernetes Operator](https://github.com/Altinity/clickhouse-operator) maintained by [Altinity](https://github.com/Altinity) and the open-source community, with the main goal of simplifying ClickHouse cluster management.
 
 ::github{repo="Altinity/clickhouse-operator"}
 
 Its main features include:
 
-* **Cluster CRD (Custom Resource Definition)**: define clusters in YAML, including shards, replicas, storage, and resources.
-* **Automated management**: create, upgrade, delete, and rolling-update nodes.
-* **High availability support**: support Replicated Tables through ZooKeeper or Keeper.
-* **Monitoring integration**: automatically export metrics to Prometheus.
+* **Cluster CRD (Custom Resource Definition)**: lets you define clusters in YAML (shards, replicas, storage, resources)
+* **Automated management**: create, upgrade, delete, and rolling-update nodes
+* **High availability support**: supports Replicated Tables through ZooKeeper or Keeper
+* **Monitoring integration**: automatically exports metrics to Prometheus
 
-Architecturally, the Operator watches the ClickHouseCluster resources in Kubernetes. Once it detects a change, such as adding a replica, it automatically adjusts the underlying StatefulSet and Pods so that the cluster state matches the declarative configuration.
+Architecturally, the Operator watches `ClickHouseCluster` resources in Kubernetes. Once it detects a change, such as adding a replica, it automatically adjusts the underlying StatefulSet and Pods so the cluster state stays consistent with the declared configuration.
 
-## Cloud deployment architecture
+## Cloud Deployment Architecture Design
 
 In the cloud, we usually design an architecture with the following characteristics:
 
-* **Shards + replicas**
-  * Shard: distributes data across different nodes to reduce storage pressure
-  * Replica: creates copies for each shard to provide high availability
-  * In this demo, we use a 1 shard, 2 replica setup
-* **ZooKeeper / Keeper coordination**
-  * Coordinates consistency for the cluster, including replicated tables and shard metadata
+* **Shards + Replicas**
+  * Shard: distribute data across nodes to spread storage pressure
+  * Replica: create copies for each shard to provide high availability
+  * In this demo, we use a 1-shard, 2-replica architecture
+* **ZooKeeper / Keeper management**
+  * Coordinates cluster consistency (table replication, shard information)
   * In this demo, we use 3 ZooKeeper nodes
 * **Persistent Volume Claims (PVC)**
-  * Ensures data is not lost after a node restart
-  * In this demo, we use `emptyDir` because it is only a demo and the data will be deleted when the cluster is shut down
-* **Resource allocation**
-  * CPU and memory limits to prevent contention with other workloads
+  * Ensure data is not lost after node restarts
+  * In this demo, we use `emptyDir` (for demo purposes, so data is deleted when it is shut down)
+* **Resource configuration**
+  * CPU and memory limits to avoid contention with other workloads
 
 Example architecture diagram:
 
 ![Zookeeper Clickhouse Structure](../../../assets/posts/clickhouse-operator-kubernates/zookeeper-clickhouse-strcture.png)
 
-> The diagram is a bit large...
+> The image looks a bit large...
 
-This setup ensures that:
+This design ensures:
 
-* Query traffic does not stop if any replica goes down
-* When data grows, you can scale out by adding new shards
+* Queries continue even if any one replica goes down
+* When data volume grows, you can horizontally scale by adding new shards
 
-## Hands-on implementation
+## Implementation
 
-Before creating the distributed table, there are a few prerequisites:
-
-1. Install [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download). I used WSL2 with Ubuntu 24.04.2 LTS.
-   * After installation, you can optionally run `minikube dashboard` to open a GUI.
-2. Install the [ClickHouse Operator](https://github.com/Altinity/clickhouse-operator/blob/master/docs/operator_installation_details.md)
-   * I only needed to run the command below. If you want the details, the documentation explains which components get deployed.
-   ```bash
-   kubectl apply -f https://raw.githubusercontent.com/Altinity/clickhouse-operator/master/deploy/operator/clickhouse-operator-install-bundle.yaml
-   ```
-3. Create a namespace to isolate the environment:
+Before creating distributed tables, there are a few prerequisites:
+1. Install [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download). I used WSL2 (Ubuntu 24.04.2 LTS)
+    * After installation, you can use `minikube dashboard` to open the GUI interface (optional)
+2. Install [ClickHouse Operator](https://github.com/Altinity/clickhouse-operator/blob/master/docs/operator_installation_details.md)
+    * I only needed to run the command below to install it. If you want the details, the documentation explains which components are deployed
+    ```bash
+    kubectl apply -f https://raw.githubusercontent.com/Altinity/clickhouse-operator/master/deploy/operator/clickhouse-operator-install-bundle.yaml
+    ``` 
+3. Create a namespace to isolate the environment
 ```bash
 kubectl create namespace zoo3ns
 ```
-4. Deploy a three-node ZooKeeper cluster. Add the following file:
+4. Deploy a three-node ZooKeeper cluster by adding the following file:
 
 ```yaml
 # zookeeper-3-nodes.yaml
@@ -339,7 +338,7 @@ spec:
             sizeLimit: 1Gi
 ```
     
-Next, apply the manifest and verify that ZooKeeper was created successfully:
+Then apply the deployment file and verify that ZooKeeper has been created:
     
 ```bash
 # Apply the configuration
@@ -401,7 +400,7 @@ spec:
               image: clickhouse/clickhouse-server:24.8
 ```
 
-Then apply the manifest and verify that ZooKeeper was created successfully:
+Then apply the deployment file and verify that ClickHouse has been created:
 ```bash
 # Apply the configuration
 kubectl apply -f clickhouse-1shards-2replicas.yaml -n zoo3ns
@@ -420,16 +419,16 @@ chi-repl-05-replicated-0-0-0   1/1     Running   0          50m
 chi-repl-05-replicated-0-1-0   1/1     Running   0          50m
 ```
 
-If everything is up, congratulations - you have completed the hardest part: **building the environment**.
+If all of that works, congratulations, you have finished the hardest part: **setting up the environment**.
 
 6. Enter ClickHouse and test whether it works
-    * Open two terminals and enter different Pods separately:
+    * Open two terminals and enter the two pods separately
         ```bash
         kubectl exec -it chi-repl-05-replicated-0-0-0 -- bash
         kubectl exec -it chi-repl-05-replicated-0-1-0 -- bash
         ```
     * After entering, run `clickhouse-client`
-    * Inside the `chi-repl-05-replicated-0-0-0` Pod, create `ReplicatedMergeTree`. This MergeTree engine helps synchronize data across different clusters, shards, and replicas automatically.
+    * Inside the `chi-repl-05-replicated-0-0-0` pod, create a `ReplicatedMergeTree`. This MergeTree engine helps automatically synchronize data across different clusters, shards, replicas, and so on
 
     ```sql
     CREATE TABLE events_local ON CLUSTER `{cluster}`
@@ -443,7 +442,7 @@ If everything is up, congratulations - you have completed the hardest part: **bu
     PARTITION BY toYYYYMM(event_date)
     ORDER BY (event_type, article_id)
     ```
-    If you get a result, it means the table was created successfully.
+    If you get the following result, it means the table was created successfully.
     ```sql
     Query id: 0e9d3beb-59ea-4194-9dbe-9f7cf88e19cc
 
@@ -454,14 +453,14 @@ If everything is up, congratulations - you have completed the hardest part: **bu
 
     2 rows in set. Elapsed: 0.253 sec.
     ```
-    * Then create the local table
+    * Next, create the distributed table
 
     ```sql
     CREATE TABLE events ON CLUSTER `{cluster}` AS events_local
     ENGINE = Distributed('{cluster}', default, events_local, rand())
     ```
 
-    If you get a result, it means the table was created successfully.
+    If you get the following result, it means the table was created successfully.
 
     ```sql
     Query id: b203ec4b-08b1-45bf-98ea-6d4ad32956d8
@@ -474,8 +473,8 @@ If everything is up, congratulations - you have completed the hardest part: **bu
     2 rows in set. Elapsed: 0.084 sec.
     ```
 
-    * Next, insert data in `chi-repl-05-replicated-0-0-0` and check whether it is synchronized in `chi-repl-05-replicated-0-1-0`
-        * First, observe from `chi-repl-05-replicated-0-1-0`. Seeing no data is expected:
+    * Next, you can insert data in `chi-repl-05-replicated-0-0-0` and observe whether the data is synchronized in `chi-repl-05-replicated-0-1-0`
+        * First observe in `chi-repl-05-replicated-0-1-0`. It is normal to see no data yet:
         ```sql
         SELECT *
         FROM events_local
@@ -487,11 +486,11 @@ If everything is up, congratulations - you have completed the hardest part: **bu
 
         0 rows in set. Elapsed: 0.002 sec.
         ```
-        * Insert data on `chi-repl-05-replicated-0-0-0`
+        * Insert data in `chi-repl-05-replicated-0-0-0`
         ```sql
         INSERT INTO events VALUES (today(), 100, 123, 'from pod A');
         ```
-        * Go back to `chi-repl-05-replicated-0-1-0` and check again:
+        * Go back to `chi-repl-05-replicated-0-1-0` and check:
         ```sql
         SELECT *
         FROM events_local
@@ -506,82 +505,82 @@ If everything is up, congratulations - you have completed the hardest part: **bu
         1 row in set. Elapsed: 0.002 sec.
         ```
 
-At this point everything is correct, which means you succeeded!!! (Although it was only on a single node.)
+At this point, everything is correct, which means you succeeded. (Though it is still on a single host.)
 
-## Deployment challenges and solutions
+## Challenges During Deployment and Solutions
 
-Even with the Operator, there are still some challenges:
+Even with the Operator, you still encounter some challenges:
 
 * **Storage management**
-  * PVC sizes need to be planned in advance, otherwise later adjustments are painful.
+  * PVC size needs to be planned in advance, otherwise later adjustments are troublesome.
   * Solution: use a StorageClass that supports dynamic expansion.
 
 * **Upgrade strategy**
-  * A direct upgrade may cause nodes to become inconsistent.
-  * Solution: use Rolling Update and make sure the table engine is Replicated-based.
+  * Direct upgrades may cause node inconsistency.
+  * Solution: use Rolling Update, and make sure the table engine belongs to the Replicated family.
 
 * **Monitoring and observability**
-  * When query performance drops, you need to diagnose quickly.
-  * Solution: combine Prometheus + Grafana to monitor query latency, merge counts, and disk usage.
+  * When query performance drops, you need fast diagnosis.
+  * Solution: combine Prometheus + Grafana to monitor query latency, merge counts, disk usage, and more.
 
-* **Network and traffic distribution**
-  * Multi-shard queries need to go through a Distributed Table or an external load balancer.
+* **Networking and traffic distribution**
+  * Multi-shard queries require a Distributed Table or external load balancing.
   * Solution: Kubernetes Ingress + ClickHouse Distributed Engine.
 
-## Difference from traditional VM deployment
+## Difference from Traditional VM Deployment
 
-| Aspect | VM / bare-metal deployment | Kubernetes deployment |
-| --- | --- | --- |
-| Deployment style | Manual installation and configuration | YAML-based and automated |
-| Scaling | Manually add machines and adjust settings | Just change replicas or shards |
-| High availability | ZooKeeper must be managed manually | Operator coordinates it automatically |
-| Upgrades | Often require downtime | Rolling updates and zero downtime |
-| Monitoring | Installed separately | Integrated with Prometheus / Grafana |
+| Aspect | VM / Bare Metal Deployment | Kubernetes Deployment |
+| ------ | -------------------------- | --------------------- |
+| Deployment method | Manual installation and configuration | YAML-defined, automated |
+| Scaling | Requires manually adding machines and changing config | Just modify replicas/shards |
+| High availability | Requires manually maintaining ZooKeeper | Coordinated automatically by the Operator |
+| Upgrades | Easier to incur downtime | Rolling updates, zero downtime |
+| Monitoring | Requires separate installation | Prometheus/Grafana integration |
 
-The conclusion is clear: if you are just testing on a single machine, VM deployment is enough. But if you want to move into production, Kubernetes + Operator is almost the standard choice.
+The conclusion is clear: if you are doing single-machine testing, VM deployment is enough. But if you are entering production, Kubernetes + Operator is close to the standard approach.
 
-## Conclusion
+## Closing
 
-ClickHouse itself is very powerful, but without a good deployment strategy, you can still run into node failures, poor scalability, and difficult upgrades. The combination of Kubernetes and the ClickHouse Operator gives us:
+ClickHouse itself is very powerful, but without a good deployment model, stability can be affected by node failures, scaling difficulties, and inconvenient upgrades. The combination of Kubernetes and ClickHouse Operator allows us to:
 
-* **Declarative configuration (YAML)** for managing the whole cluster
-* Automated **deployment, upgrades, and scaling**
-* High availability and fault tolerance for cloud-scale analytics
+* Manage the entire cluster with **declarative configuration (YAML)**
+* Automate **deployment, upgrades, and scaling**
+* Provide high availability and fault tolerance for cloud-scale analytics
 
-As data keeps growing, this kind of cloud-native deployment has become the preferred choice for production ClickHouse environments.
+As data volume keeps growing, this cloud-native deployment model has become the preferred choice for ClickHouse in production.
 
-Tomorrow is the last day of the ClickHouse series :D
+Tomorrow is already the last day of the ClickHouse series :D
 
 
-### ClickHouse series updates:
+### ClickHouse Series Updates:
 
-1. [ClickHouse Series: What is ClickHouse? The difference between OLAP and OLTP databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
-2. [ClickHouse Series: Why does ClickHouse choose column-based storage? The core difference between row-based and column-based storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)
-3. [ClickHouse Series: ClickHouse storage engine - MergeTree](https://blog.vicwen.app/posts/clickhouse-mergetree-engine)
-4. [ClickHouse Series: How compression techniques and Data Skipping Indexes dramatically speed up queries](https://blog.vicwen.app/posts/clickhouse-compression-skipping-index/)
-5. [ClickHouse Series: ReplacingMergeTree and data deduplication](https://blog.vicwen.app/posts/clickhouse-replacingmergetree-deduplication/)
-6. [ClickHouse Series: Use cases for aggregating data with SummingMergeTree](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
-7. [ClickHouse Series: Real-time aggregation with Materialized Views](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
-8. [ClickHouse Series: Partitioning strategies and how Partition Pruning works](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
-9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule indexes work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
-10. [ClickHouse Series: CollapsingMergeTree and best practices for logical deletes](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
-11. [ClickHouse Series: VersionedCollapsingMergeTree version control and conflict resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
-12. [ClickHouse Series: Advanced use of AggregatingMergeTree for real-time metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)
-13. [ClickHouse Series: Distributed Table and distributed query architecture](https://blog.vicwen.app/posts/clickhouse-distributed-table-architecture/)
-14. [ClickHouse Series: High availability and zero-downtime upgrades with Replicated Tables](https://blog.vicwen.app/posts/clickhouse-replication-failover/)
-15. [ClickHouse Series: Building a real-time data streaming pipeline with Kafka](https://blog.vicwen.app/posts/clickhouse-kafka-data-streaming-pipeline/)
-16. [ClickHouse Series: Best practices for batch import (CSV, Parquet, Native Format)](https://blog.vicwen.app/posts/clickhouse-batch-import/)
-17. [ClickHouse Series: Integrating ClickHouse with external data sources (PostgreSQL)](https://blog.vicwen.app/posts/clickhouse-external-data-integration/)
+1. [ClickHouse Series: What Is ClickHouse? How It Differs from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
+2. [ClickHouse Series: Why Does ClickHouse Choose Column-based Storage? The Core Differences Between Row-based and Column-based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)
+3. [ClickHouse Series: ClickHouse Storage Engine - MergeTree](https://blog.vicwen.app/posts/clickhouse-mergetree-engine)
+4. [ClickHouse Series: How Compression and Data Skipping Indexes Greatly Speed Up Queries](https://blog.vicwen.app/posts/clickhouse-compression-skipping-index/)
+5. [ClickHouse Series: ReplacingMergeTree and Data Deduplication](https://blog.vicwen.app/posts/clickhouse-replacingmergetree-deduplication/)
+6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
+7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
+8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
+9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
+11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
+12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)
+13. [ClickHouse Series: Distributed Tables and Distributed Query Architecture](https://blog.vicwen.app/posts/clickhouse-distributed-table-architecture/)
+14. [ClickHouse Series: High Availability and Zero-Downtime Upgrades with Replicated Tables](https://blog.vicwen.app/posts/clickhouse-replication-failover/)
+15. [ClickHouse Series: Building a Real-Time Data Streaming Pipeline with Kafka Integration](https://blog.vicwen.app/posts/clickhouse-kafka-data-streaming-pipeline/)
+16. [ClickHouse Series: Best Practices for Batch Imports (CSV, Parquet, Native Format)](https://blog.vicwen.app/posts/clickhouse-batch-import/)
+17. [ClickHouse Series: Integrating ClickHouse with External Data Sources (PostgreSQL)](https://blog.vicwen.app/posts/clickhouse-external-data-integration/)
 18. [ClickHouse Series: How to Improve Query Performance with system.query_log and EXPLAIN](https://blog.vicwen.app/posts/clickhouse-query-log-explain/)
-19. [ClickHouse Series: Advanced query acceleration with Projections](https://blog.vicwen.app/posts/clickhouse-projections-optimization/)
-20. [ClickHouse Series: Sampling queries and statistical techniques](https://blog.vicwen.app/posts/clickhouse-sampling-statistics/)
-21. [ClickHouse Series: TTL data cleanup and storage cost optimization](https://blog.vicwen.app/posts/clickhouse-ttl-storage-management/)
-22. [ClickHouse Series: Storage Policies and tiered disk strategies](https://blog.vicwen.app/posts/clickhouse-storage-policies/)
-23. [ClickHouse Series: Table design and storage optimization details](https://blog.vicwen.app/posts/clickhouse-schemas-storage-improvement/)
-24. [ClickHouse Series: Integrating Grafana for visual monitoring](https://blog.vicwen.app/posts/clickhouse-grafana-dashboard/)
-25. [ClickHouse Series: Query optimization case studies](https://blog.vicwen.app/posts/clickhouse-select-optimization/)
-26. [ClickHouse Series: Integrating with BI tools (Power BI)](https://blog.vicwen.app/posts/clickhouse-bi-integration/)
-27. [ClickHouse Series: Comparing ClickHouse Cloud and self-hosted deployments](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
-28. [ClickHouse Series: Database security and RBAC implementation](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
-29. [ClickHouse Series: Deploying distributed architecture on Kubernetes](https://blog.vicwen.app/posts/clickhouse-operator-kubernates/)
-30. [ClickHouse Series: Looking at the six core mechanisms of MergeTree from source code](https://blog.vicwen.app/posts/clickhouse-mergetree-sourcecode-introduction/)
+19. [ClickHouse Series: Advanced Query Acceleration with Projections](https://blog.vicwen.app/posts/clickhouse-projections-optimization/)
+20. [ClickHouse Series: Sampling Queries and Statistical Techniques](https://blog.vicwen.app/posts/clickhouse-sampling-statistics/)
+21. [ClickHouse Series: TTL Data Cleanup and Storage Cost Optimization](https://blog.vicwen.app/posts/clickhouse-ttl-storage-management/)
+22. [ClickHouse Series: Storage Policies and Tiered Disk Strategy](https://blog.vicwen.app/posts/clickhouse-storage-policies/)
+23. [ClickHouse Series: Table Design and Storage Optimization Details](https://blog.vicwen.app/posts/clickhouse-schemas-storage-improvement/)
+24. [ClickHouse Series: Building Visual Monitoring with Grafana Integration](https://blog.vicwen.app/posts/clickhouse-grafana-dashboard/)
+25. [ClickHouse Series: Query Optimization Case Studies](https://blog.vicwen.app/posts/clickhouse-select-optimization/)
+26. [ClickHouse Series: Integrating with BI Tools (Power BI)](https://blog.vicwen.app/posts/clickhouse-bi-integration/)
+27. [ClickHouse Series: ClickHouse Cloud vs. Self-Hosted Deployments](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
+28. [ClickHouse Series: Implementing Database Security and RBAC](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
+29. [ClickHouse Series: Deploying a Distributed Architecture on Kubernetes](https://blog.vicwen.app/posts/clickhouse-operator-kubernates/)
+30. [ClickHouse Series: The Six Core Mechanisms of MergeTree from the Source Code](https://blog.vicwen.app/posts/clickhouse-mergetree-sourcecode-introduction/)

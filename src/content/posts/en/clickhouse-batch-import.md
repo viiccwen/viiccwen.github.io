@@ -22,7 +22,7 @@ This article introduces three common formats:
 
 In ClickHouse, batch imports are most commonly performed through:
 
-1. **clickhouse-client** command-line import (I've only used this for debugging...)
+1. **clickhouse-client** command-line import (I only use this for debugging...)
 2. **HTTP interface** (`INSERT INTO ... FORMAT`)
 3. **External tools** such as `clickhouse-local`, ETL tools, and Python SDKs
 
@@ -35,9 +35,9 @@ No matter which method you use, you must:
 
 ### Suitable scenarios
 
-* The source system exports plain text files
+* The source system exports plain-text files
 * Cross-platform, easy to inspect and edit
-* **Not focused on maximum performance**, but easy to integrate
+* **Not optimized for maximum performance**, but easy to integrate
 
 ### Example
 
@@ -145,7 +145,7 @@ clickhouse-client --query="INSERT INTO events_native FORMAT Native" < events.nat
 
 If batch imports are frequent, you can combine **partitioning** and **parallel batch imports** to shorten load time even further.
 
-### ClickHouse Series Continues:
+### More Posts in This Series:
 
 1. [ClickHouse Series: What Is ClickHouse? How It Differs from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
 2. [ClickHouse Series: Why ClickHouse Uses Column-Based Storage? Core Differences Between Row-Based and Column-Based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)
@@ -156,7 +156,7 @@ If batch imports are frequent, you can combine **partitioning** and **parallel b
 7. [ClickHouse Series: Real-Time Aggregation with Materialized Views](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partition Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
 9. [ClickHouse Series: Primary Key, Sorting Key, and How Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
-10. [ClickHouse Series: Best Practices for CollapsingMergeTree and Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
+10. [ClickHouse Series: Best Practices for CollapsingMergeTree and Logical Deletes](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree and Data Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)
 13. [ClickHouse Series: Distributed Tables and Distributed Query Architecture](https://blog.vicwen.app/posts/clickhouse-distributed-table-architecture/)
@@ -167,13 +167,13 @@ If batch imports are frequent, you can combine **partitioning** and **parallel b
 18. [ClickHouse Series: How to Improve Query Performance with system.query_log and EXPLAIN](https://blog.vicwen.app/posts/clickhouse-query-log-explain/)
 19. [ClickHouse Series: Advanced Query Acceleration with Projections](https://blog.vicwen.app/posts/clickhouse-projections-optimization/)
 20. [ClickHouse Series: Sampling Queries and Statistical Techniques](https://blog.vicwen.app/posts/clickhouse-sampling-statistics/)
-21. [ClickHouse Series: TTL-Based Data Cleanup and Storage Cost Optimization](https://blog.vicwen.app/posts/clickhouse-ttl-storage-management/)
+21. [ClickHouse Series: TTL Data Cleanup and Storage Cost Optimization](https://blog.vicwen.app/posts/clickhouse-ttl-storage-management/)
 22. [ClickHouse Series: Storage Policies and Tiered Disk Resource Management](https://blog.vicwen.app/posts/clickhouse-storage-policies/)
 23. [ClickHouse Series: Table Design and Storage Optimization Details](https://blog.vicwen.app/posts/clickhouse-schemas-storage-improvement/)
 24. [ClickHouse Series: Building Visual Monitoring with Grafana](https://blog.vicwen.app/posts/clickhouse-grafana-dashboard/)
 25. [ClickHouse Series: Query Optimization Case Studies](https://blog.vicwen.app/posts/clickhouse-select-optimization/)
 26. [ClickHouse Series: Integrating with BI Tools (Power BI)](https://blog.vicwen.app/posts/clickhouse-bi-integration/)
-27. [ClickHouse Series: ClickHouse Cloud vs Self-Hosted Deployment](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
-28. [ClickHouse Series: Database Security and Access Control (RBAC)](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
+27. [ClickHouse Series: Comparing ClickHouse Cloud and Self-Hosted Deployments](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
+28. [ClickHouse Series: Database Security and RBAC](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
 29. [ClickHouse Series: Deploying a Distributed Architecture on Kubernetes](https://blog.vicwen.app/posts/clickhouse-operator-kubernates/)
 30. [ClickHouse Series: Six Core MergeTree Mechanisms Seen from the Source Code](https://blog.vicwen.app/posts/clickhouse-mergetree-sourcecode-introduction/)

@@ -232,10 +232,10 @@ In practice, it is recommended to:
 * Query small tables or the latest data through external tables
 * Combine with Materialized Views for real-time aggregation
 
-#### ClickHouse Series Ongoing:
+### More Posts in This Series:
 
 1. [ClickHouse Series: What Is ClickHouse? Differences from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
-2. [ClickHouse Series: Why Does ClickHouse Use Column-Based Storage? Explaining the Core Differences Between Row-Based and Column-Based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)
+2. [ClickHouse Series: Why ClickHouse Uses Column-Based Storage? The Core Difference Between Row-Based and Column-Based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)
 3. [ClickHouse Series: ClickHouse Storage Engine - MergeTree](https://blog.vicwen.app/posts/clickhouse-mergetree-engine)
 4. [ClickHouse Series: How Compression Techniques and Data Skipping Indexes Dramatically Speed Up Queries](https://blog.vicwen.app/posts/clickhouse-compression-skipping-index/)
 5. [ClickHouse Series: ReplacingMergeTree and the Data Deduplication Mechanism](https://blog.vicwen.app/posts/clickhouse-replacingmergetree-deduplication/)
@@ -243,7 +243,7 @@ In practice, it is recommended to:
 7. [ClickHouse Series: Real-Time Aggregation Queries with Materialized Views](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partitioning Strategies and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
 9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexing Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
-10. [ClickHouse Series: Best Practices for CollapsingMergeTree and Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
+10. [ClickHouse Series: Best Practices for CollapsingMergeTree and Logical Deletes](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: Version Control and Data Conflict Resolution with VersionedCollapsingMergeTree](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Applications of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)
 13. [ClickHouse Series: Distributed Tables and Distributed Query Architecture](https://blog.vicwen.app/posts/clickhouse-distributed-table-architecture/)

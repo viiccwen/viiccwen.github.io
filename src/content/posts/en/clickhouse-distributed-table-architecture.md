@@ -13,11 +13,11 @@ lang: 'en'
 This article covers some basic definitions and concepts from distributed systems, so feel free to enjoy it.
 :::
 
-As data volume grows from the TB level to the PB level, a single-node architecture is obviously no longer enough for modern analytics and real-time query workloads. Through **Distributed Tables and distributed query architecture**, ClickHouse can scale horizontally across **dozens or even hundreds of nodes** while still keeping query latency at the second level on massive datasets.
+As data volume grows from the TB level to the PB level, a single-node architecture is obviously no longer enough for modern analytics and real-time query workloads. With **Distributed Tables and distributed query architecture**, ClickHouse can scale horizontally across **dozens or even hundreds of nodes** while still keeping query latency at the second level on massive datasets.
 
 ## What Is a Distributed Table?
 
-A Distributed Table is not a table that **actually stores data**. Instead, it is ClickHouse's **query-routing proxy**. Its job is to:
+A Distributed Table is not a table that **actually stores data**. Instead, it is ClickHouse's **query-routing layer**. Its job is to:
 
 * Receive distributed query requests.
 * Route queries to the correct data nodes based on the sharding rule.
@@ -34,7 +34,7 @@ A Distributed Table is not a table that **actually stores data**. Instead, it is
 
 ![](../../../assets/posts/clickhouse-distributed-table-architecture/distributed-architecture.png)
 
-> Made it myself
+> Diagram by me
 
 ## Syntax and Configuration
 
@@ -174,7 +174,7 @@ There is a lot more here. If you are interested, check the [official documentati
 | `connect_timeout_with_failover_ms`        | Timeout for switching to another replica if one fails during a Distributed query |
 
 
-### More ClickHouse Series Posts Coming:
+### More Posts in This Series:
 
 1. [ClickHouse Series: What Is ClickHouse? Differences from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
 2. [ClickHouse Series: Why ClickHouse Uses Column-Based Storage? A Core Comparison of Row-Based and Column-Based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)

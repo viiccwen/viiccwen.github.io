@@ -9,9 +9,9 @@ draft: false
 lang: "en"
 ---
 
-I am Vic. I recently finished my internship at my previous company, so I came back to the blog to sort out my thoughts and squeeze in a little reflection during a busy first week of school.
+I am Vic. I recently finished my internship at my previous company, so I came back to the blog to sort out my thoughts and make room for a little reflection during a busy first week of school.
 
-From July 2025 to February 2026, I worked at FXG as a backend software engineering intern. During the summer I was on-site, and from the middle to the later stages I switched to a hybrid schedule, going in about two days a week. It was a 40-hour workweek throughout, so balancing work and school after classes started took some effort. Fortunately, I kept up with my coursework pretty well and even scraped the edge of the dean's list.
+From July 2025 to February 2026, I worked at FXG as a backend software engineering intern. During the summer I was on-site, and from the middle to the later stages I switched to a hybrid schedule, going in about two days a week. It was a 40-hour workweek the whole time, so balancing work and school after classes started took some effort. Fortunately, I kept up with my coursework pretty well and even barely made the dean's list.
 
 Recently someone asked me, "Vic, why did you decide to do an internship in the first place? Isn't it pretty nice just to slack off at home during summer?" Honestly, I thought the same thing. So why still go intern?
 

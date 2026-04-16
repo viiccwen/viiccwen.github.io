@@ -139,7 +139,7 @@ ORDER BY (user_id, event_time);
 
 CollapsingMergeTree is a powerful tool in ClickHouse for event deduplication and soft delete scenarios. By marking record state through the `sign` column, and combining that with proper Primary Key design and background merge strategy, you can efficiently implement soft deletes and deduplication. However, for workloads with strict query consistency requirements, you need to carefully design your `FINAL` query strategy and regular optimization schedule to avoid performance bottlenecks.
 
-### More ClickHouse Series Posts Coming:
+### More Posts in This Series:
 
 1. [ClickHouse Series: What Is ClickHouse? Differences from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
 2. [ClickHouse Series: Why ClickHouse Uses Column-Based Storage? A Core Comparison of Row-Based and Column-Based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)

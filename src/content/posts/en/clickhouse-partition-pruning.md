@@ -13,13 +13,13 @@ When you are dealing with hundreds of millions or even billions of rows, query p
 
 ## What is a Partition?
 
-In ClickHouse, a **partition is a logical unit of data splitting**. Data is split into independent blocks (directories) based on a specified Partition Key expression, and those blocks can be filtered during query time to avoid full table scans.
+In ClickHouse, a **partition is a logical way to split data**. Data is split into independent blocks (directories) based on a specified Partition Key expression, and those blocks can be filtered during query time to avoid full table scans.
 
 ### Important characteristics:
 
 * Partitioning is one of the core structures of the MergeTree engine.
 * The Partition Key can be any expression, such as `toYYYYMM(date)`, `device_id`, or `region_id`.
-* Partitioning happens at the "physical directory" level, which makes the optimization effect very obvious.
+* Partitioning happens at the physical directory level, which makes the optimization effect very obvious.
 * The smaller the partitioning scope, the more data queries can skip, but the more small files and merge overhead you create.
 
 ## Difference between Partition and Primary Key
@@ -34,7 +34,7 @@ The two are complementary: Partition is used for coarse range pruning, while Pri
 
 ## How Partition Pruning works
 
-Partition Pruning is ClickHouse automatically determining, based on the WHERE clause, which partitions cannot possibly contain matching data and skipping them entirely.
+Partition Pruning means ClickHouse uses the `WHERE` clause to determine which partitions cannot possibly contain matching data and skips them entirely.
 
 ### Example:
 
@@ -150,7 +150,7 @@ Partition Pruning is one of ClickHouse's most powerful query acceleration techni
 6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
 7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
-9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+9. [ClickHouse Series: How Primary Keys, Sorting Keys, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
 10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)

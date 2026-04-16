@@ -14,13 +14,13 @@ In OLAP systems, "real-time aggregation" and "precomputation" are the core strat
 
 ## What is a Materialized View?
 
-A Materialized View is a **query view with persisted results**. When data is inserted into the source table, ClickHouse automatically evaluates the defined SELECT query and writes the result into the target table.
+A Materialized View is a **view with persisted results**. When data is inserted into the source table, ClickHouse automatically evaluates the defined `SELECT` query and writes the result into the target table.
 
-In simple terms, it is a mechanism for "**automatically triggered insert + aggregation query + write to summary table**."
+In simple terms, it is an **automatically triggered insert, aggregation, and write to a summary table**.
 
 ### Characteristics:
 
-* When data is INSERTed into the source table, the computed result is written to the target table automatically.
+* When data is `INSERT`ed into the source table, the computed result is written to the target table automatically.
 * The target table is usually `SummingMergeTree` or `AggregatingMergeTree`.
 * It only computes results for newly inserted data and does not re-scan old data.
 
@@ -72,8 +72,8 @@ Every time data is written into the `events` table, ClickHouse automatically cal
 ## How it works
 
 1. INSERT -> `events`
-2. The Materialized View triggers a SELECT plus aggregation
-3. The result is INSERTed into `daily_page_views`
+2. The Materialized View triggers a `SELECT` with aggregation
+3. The result is `INSERT`ed into `daily_page_views`
 4. Queries on `daily_page_views` read the pre-aggregated result directly
 
 
@@ -132,7 +132,7 @@ GROUP BY date, page;
 | Type | Description | Main purpose |
 | --------------------- | ----------------------------------- | -------------------------- |
 | **Materialized View** | Materializes query results into a table when data is inserted | Real-time aggregation and summarization |
-| **View** | Executes SELECT at query time with no stored data | Simplify complex query syntax |
+| **View** | Executes `SELECT` at query time with no stored data | Simplify complex query syntax |
 | **LIVE View** | Automatically pushes query results based on data updates, similar to a streaming query | Real-time dynamic queries, but heavier and not recommended for large-scale data |
 
 
@@ -161,7 +161,7 @@ Materialized Views provide an "automatic compute, real-time write" aggregation m
 6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
 7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
-9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+9. [ClickHouse Series: How Primary Keys, Sorting Keys, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
 10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)

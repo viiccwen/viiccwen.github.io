@@ -9,13 +9,13 @@ draft: false
 lang: "en"
 ---
 
-In the previous articles, we already introduced ClickHouse's basic architecture, the MergeTree storage engine, and various indexing and data compression mechanisms. These features make ClickHouse a highly performant OLAP database, especially for large-scale data queries.
+In the previous articles, we already introduced ClickHouse's basic architecture, the MergeTree storage engine, and various indexing and compression mechanisms. These features make ClickHouse a highly performant OLAP database, especially for large-scale queries.
 
-However, in real projects, we often find that performance is not guaranteed. Even with the same table and the same data, a poorly designed query can be more than 100 times slower.
+However, in real projects, performance is not guaranteed. Even with the same table and the same data, a poorly designed query can run more than 100 times slower.
 
 ## Why Do We Need Query Optimization?
 
-ClickHouse is indeed very good at handling billions of rows, but that does not mean we can query it blindly. As data grows from **1 million -> 10 million -> 100 million**, poor design can make query speed degrade from milliseconds to several seconds or even tens of seconds, directly hurting the user experience.
+ClickHouse is very good at handling billions of rows, but that does not mean we can query it blindly. As data grows from **1 million -> 10 million -> 100 million**, poor design can make query speed degrade from milliseconds to several seconds or even tens of seconds, directly hurting the user experience.
 
 For example:
 
@@ -35,7 +35,7 @@ ORDER BY created_at DESC
 LIMIT 50 OFFSET 1000000;
 ```
 
-This query looks normal, but performance drops sharply as OFFSET grows. The reason is that ClickHouse has to scan and discard the first million rows before it can return rows 1,000,001 through 1,000,050.
+This query looks normal, but performance drops sharply as OFFSET grows. ClickHouse has to scan and discard the first million rows before it can return rows 1,000,001 through 1,000,050.
 
 ### Optimization: Keyset Pagination
 
@@ -70,7 +70,7 @@ If the table's sorting key is not `(user_id, created_at)`, this query will scan 
 
 ### Optimization: Primary Key + Partition
 
-When designing a table, we should think about the query patterns and make the common filter conditions part of the sorting key or partition:
+When designing a table, we should think about query patterns and make the common filter conditions part of the sorting key or partition:
 
 ```sql
 CREATE TABLE logs

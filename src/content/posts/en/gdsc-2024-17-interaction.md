@@ -11,7 +11,7 @@ lang: 'en'
 
 # Preface
 
-I was really happy to attend the 17-school GDSC Joint Technical Exchange Event on 2024/04/21 (Sun). My feelings were similar to last time. I was not only hoping to exchange ideas about technology and projects, but also to meet more people who are shining in different fields, so that I would not feel alone on my own path in life and could stay motivated to keep moving forward.
+I was really happy to attend the 17-school GDSC Joint Technical Exchange Event on 2024/04/21 (Sun). My feelings were similar to last time. I was not only hoping to exchange ideas about technology and projects, but also to meet more people who are shining in different fields, so that I would not feel alone on my own path and could stay motivated to keep moving forward.
 
 But this time, my role was different. I had gone from being a General Member to becoming a **Core Team Member**.
 
@@ -39,7 +39,7 @@ But this time, my role was different. I had gone from being a General Member to 
 
 Everyone had to stand up and introduce themselves, but also incorporate the role they drew XD. For example, our group got "teacher."
 
-Then I ran off to chat with people from other groups that I did not know. I met two upperclassmen from NTHU and NYCU, and I kept asking them a lot about future directions. Even though they kept telling me not to rush hahaha, having no direction for the future really can make you anxious. I am still searching for the direction I want to take, and I do not want to let myself stay stuck in place.
+Then I went off to chat with people from other groups that I did not know. I met two upperclassmen from NTHU and NYCU, and I kept asking them about future directions. Even though they kept telling me not to rush hahaha, having no direction for the future really can make you anxious. I am still searching for the direction I want to take, and I do not want to let myself stay stuck in place.
 
 # Project Sharing from Each School
 
@@ -65,7 +65,7 @@ Sadly, my GDSC power level was not high enough, and I ended up in fourth place. 
 
 Compared with last time, I felt much more familiar with this kind of setting. Maybe last time I was fighting alone, going to the exchange event by myself to meet other people, so I seemed a bit timid. But this time I walked right up and chatted with everyone naturally. I also met an amazing senior from Taipei Medical University, who was a GitHub Campus Ambassador. Absolutely insane. Orz, seriously too strong.
 
-I also talked with some of the seniors about future plans. One of them is going abroad for graduate school, which is actually something I have thought about too. But reality really hits hard QQ, and part of it is also the financial side.
+I also talked with some of the seniors about future plans. One of them is going abroad for graduate school, which is something I have also thought about. But reality really hits hard QQ, and part of it is the financial side too.
 
 This event was shorter than the last one, though, so it felt like everyone had not talked enough yet. So a bunch of us decided to go get dinner together afterward.
 

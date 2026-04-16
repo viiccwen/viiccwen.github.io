@@ -9,7 +9,7 @@ draft: false
 lang: "en"
 ---
 
-Database security and permission management, also known as RBAC, or Role-Based Access Control, is an essential part of the infrastructure. ClickHouse supports fine-grained permissions and RBAC mechanisms, which help ensure correct isolation and authorization of data resources while reducing operational risk and security threats.
+Database security and permission management, also known as RBAC (Role-Based Access Control), is an essential part of infrastructure. ClickHouse supports fine-grained permissions and RBAC mechanisms, which help ensure proper isolation and authorization of data resources while reducing operational risk and security threats.
 
 ## RBAC Architecture and Core Concepts
 

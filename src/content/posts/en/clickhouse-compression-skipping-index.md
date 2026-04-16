@@ -13,11 +13,11 @@ Behind ClickHouse's high-performance queries, in addition to columnar storage an
 
 > [One of the secrets to ClickHouse query performance is compression.](https://clickhouse.com/docs/data-compression/compression-in-clickhouse)
 
-## Why is compression so important for OLAP performance?
+## Why compression matters for OLAP performance
 
 In OLAP workloads, the data volume can easily reach millions or tens of millions of rows. Without good compression, disk I/O quickly becomes the bottleneck. ClickHouse uses Columnar Storage, which makes each column consistent in type and highly repetitive, so compression works extremely well.
 
-### ClickHouse compression benefits:
+### Benefits of ClickHouse compression:
 * **Lower storage usage** (compression ratios are often 5 to 10 times or more)
 * **Less disk I/O transfer** (faster reads, lower latency)
 * **Better CPU decompression performance** (using lightweight, fast compression algorithms)
@@ -32,7 +32,7 @@ In OLAP workloads, the data volume can easily reach millions or tens of millions
 | **Gorilla Encoding** | Highly optimized for time-series data, suitable for IoT and telemetry compression such as CPU usage or temperature |
 | **Double Delta** | Useful for numeric data with smooth trends, improving compression further |
 
-Below is the compression statistics for a ClickHouse table storing StackOverflow posts. The query uses `system.columns` to retrieve the compressed and uncompressed size of each column, as well as the compression ratio.
+Below are compression statistics for a ClickHouse table storing StackOverflow posts. The query uses `system.columns` to retrieve the compressed and uncompressed size of each column, as well as the compression ratio.
 
 ```sql
 SELECT name,
@@ -70,7 +70,7 @@ GROUP BY name
 ```
 
 You can see that:
-* Highly repetitive columns such as `FavoriteCount` and `ContentLicense` can reach compression ratios of hundreds or even thousands of times. That is the advantage of columnar storage combined with specialized codecs.
+* Highly repetitive columns such as `FavoriteCount` and `ContentLicense` can reach compression ratios of hundreds or even thousands to one. That is the advantage of columnar storage combined with specialized codecs.
 * Numeric columns such as `Score`, `AcceptedAnswerId`, and `PostTypeId` also compress very well. Delta encoding combined with LZ4 or ZSTD can greatly reduce data size.
 * Although `Body` and `Title` are text columns, they still achieve a 2-3x compression ratio, and combining them with LowCardinality will improve space efficiency even more.
 
@@ -157,7 +157,7 @@ ALTER TABLE logs ADD INDEX idx_level (level) TYPE set(1000) GRANULARITY 1;
 
 ## Closing thoughts
 
-With efficient compression and skipping indexes, ClickHouse can make big-data queries respond in milliseconds. Just do not overuse indexes, or the result may be the opposite of what you want.
+With efficient compression and skipping indexes, ClickHouse can return big-data queries in milliseconds. Just do not overuse indexes, or the result may be worse than a table scan.
 
 ### ClickHouse Series Updates:
 
@@ -169,7 +169,7 @@ With efficient compression and skipping indexes, ClickHouse can make big-data qu
 6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
 7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
-9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+9. [ClickHouse Series: How Primary Keys, Sorting Keys, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
 10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)

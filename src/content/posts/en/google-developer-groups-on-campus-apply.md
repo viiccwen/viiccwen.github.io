@@ -11,13 +11,13 @@ lang: 'en'
 
 When we talk about campus tech clubs, one of the most well-known is definitely Google Developer Student Clubs, the former name of Google Developer Groups On Campus. But even though it is well known, many people still wonder: "What do they actually do?" "What benefits does joining a club like this bring to my learning and future?"
 
-As a current GDG on Campus Lead at National Taiwan University of Science and Technology, I can use this article to give everyone a closer look.
+As the current GDG on Campus Lead at National Taiwan University of Science and Technology, I can use this article to give everyone a closer look.
 
 # What Is GDG on Campus?
 GDG on Campus was formerly known as Google Developer Student Clubs. Its core idea is to help students get exposure to the latest technology tools and trends through an open, collaborative community, so they can improve their technical abilities and even find like-minded partners to build innovative projects together.
 
 Its main activities generally include:
-There may be slight differences depending on each school's community, but most follow a setup similar to the following:
+The exact format may vary by school, but most communities follow a structure similar to the one below:
 
 **1. Regular Weekly Sessions**
 

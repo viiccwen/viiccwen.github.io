@@ -9,17 +9,17 @@ draft: false
 lang: "en"
 ---
 
-In big-data environments, data duplication is a common and annoying problem. This is especially true in ETL pipelines or real-time data ingestion such as Kafka streams, where duplicate rows can seriously distort statistics and hurt query performance. ClickHouse provides a simple but powerful deduplication mechanism: the **ReplacingMergeTree** storage engine.
+In large-scale data systems, duplicate rows are a common and annoying problem. This is especially true in ETL pipelines or real-time ingestion such as Kafka streams, where duplicates can distort statistics and hurt query performance. ClickHouse provides a simple but powerful deduplication mechanism: the **ReplacingMergeTree** storage engine.
 
 This article walks through how ReplacingMergeTree works, where it fits, and the best practices for using it.
 
 ## What is ReplacingMergeTree?
 
-ReplacingMergeTree is one of the MergeTree family engines in ClickHouse (~the family is huge~). During background Merge operations, it can automatically remove duplicate rows based on a specified field such as a version column, keeping the newest version or the first inserted row.
+ReplacingMergeTree is one of the MergeTree family engines in ClickHouse (the family is quite broad). During background merge operations, it can automatically remove duplicate rows based on a specified field such as a version column, keeping the newest version or the first inserted row.
 
 ### How it works:
 
-1. When data is INSERTed, it is **not deduplicated immediately**. Instead, it is written to disk as Data Parts.
+1. When data is inserted, it is **not deduplicated immediately**. Instead, it is written to disk as Data Parts.
 2. During **background Merge operations**, ClickHouse compares rows by Primary Key. If duplicate records with the same Primary Key are found, it keeps the row with the largest version value (or any row if no version is specified).
 3. Deduplication is **not real-time**. It is eventually consistent, and the actual deduplication point happens during the Merge stage.
 
@@ -37,7 +37,7 @@ ORDER BY user_id;
 ```
 
 * `profile_version` is the version column that decides which row to keep during deduplication.
-* If no version is specified, the system keeps one row at random (order is not guaranteed). It is basically a Russian roulette approach.
+* If no version is specified, the system keeps one row at random (order is not guaranteed), so the result is nondeterministic.
 
 ```sql
 INSERT INTO user_profiles VALUES (1, 1, 'Alice', 'alice_v1@example.com');
@@ -45,7 +45,7 @@ INSERT INTO user_profiles VALUES (1, 2, 'Alice', 'alice_v2@example.com');
 INSERT INTO user_profiles VALUES (2, 1, 'Bob', 'bob@example.com');
 ```
 
-When querying, you may still see duplicates, because deduplication has not happened yet through Merge:
+When querying, you may still see duplicates because deduplication has not happened yet in the background merge:
 
 ```sql
 SELECT * FROM user_profiles WHERE user_id = 1;
@@ -58,7 +58,7 @@ Result:
 | 1        | 1                | Alice | [alice_v1@example.com](mailto:alice_v1@example.com) |
 | 1        | 2                | Alice | [alice_v2@example.com](mailto:alice_v2@example.com) |
 
-After using `FINAL` in the query, the result reflects the latest deduplicated data:
+After forcing a merge with `OPTIMIZE TABLE ... FINAL`, the result reflects the latest deduplicated data:
 
 ```sql
 OPTIMIZE TABLE user_profiles FINAL;
@@ -148,7 +148,7 @@ That said, understanding **when deduplication happens** and **how to design the 
 6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
 7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
-9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+9. [ClickHouse Series: How Primary Keys, Sorting Keys, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
 10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)

@@ -1,5 +1,5 @@
 ---
-title: "ClickHouse Series: Why Does ClickHouse Choose Column-based Storage? Explaining the Core Differences Between Row-based and Column-based Storage"
+title: "ClickHouse Series: Why Does ClickHouse Choose Column-based Storage? The Core Differences Between Row-based and Column-based Storage"
 published: 2025-08-05
 description: ""
 image: "https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress"
@@ -9,7 +9,7 @@ draft: false
 lang: "en"
 ---
 
-In the previous two articles, I mentioned that Row-based Storage and Column-based Storage are the fundamental architectural differences between OLTP and OLAP systems. This article starts from the principles of row and column storage to explain why ClickHouse chose a columnar architecture, and what performance benefits and use cases it brings.
+In the previous two articles, I mentioned that Row-based Storage and Column-based Storage are the fundamental architectural differences between OLTP and OLAP systems. This article starts from the storage principles themselves to explain why ClickHouse chose a columnar architecture, and what performance benefits and use cases that choice brings.
 
 ## What is Row-based Storage?
 
@@ -84,7 +84,7 @@ In modern analytics workloads, most queries involve heavy reads and multi-column
 
 ## Closing thoughts
 
-Most everyday development work tends to use OLTP databases, because the focus is usually on real-time transaction processing (ACID). I only got exposed to TB- and PB-scale data by chance, and that is when I realized there is a whole world of OLAP, OLTP, Row-based Storage, and Column-based Storage behind it.
+Most everyday development work tends to use OLTP databases because the focus is usually on real-time transaction processing (ACID). I only got exposed to TB- and PB-scale data by chance, and that is when I realized there is a whole world of OLAP, OLTP, Row-based Storage, and Column-based Storage behind it.
 
 ### ClickHouse Series Updates:
 
@@ -96,7 +96,7 @@ Most everyday development work tends to use OLTP databases, because the focus is
 6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
 7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
-9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+9. [ClickHouse Series: How Primary Keys, Sorting Keys, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
 10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)

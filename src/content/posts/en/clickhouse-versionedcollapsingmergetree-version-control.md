@@ -139,7 +139,7 @@ Suppose you are building a user behavior tracking platform and need to backfill 
 
 VersionedCollapsingMergeTree is a powerful engine in ClickHouse for managing data state and handling complex deduplication and rewrite scenarios. It combines the cancellation logic of CollapsingMergeTree with the version-control capability of ReplacingMergeTree, making it a strong fit for workloads where data changes frequently and version consistency matters. That said, you need to pay close attention to the consistency of the Primary Key, `sign`, and `version` design if you want to get the best performance out of it.
 
-### More ClickHouse Series Posts Coming:
+### More Posts in This Series:
 
 1. [ClickHouse Series: What Is ClickHouse? Differences from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
 2. [ClickHouse Series: Why ClickHouse Uses Column-Based Storage? A Core Comparison of Row-Based and Column-Based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)

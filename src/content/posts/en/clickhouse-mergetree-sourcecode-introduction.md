@@ -1,44 +1,43 @@
 ---
-title: "ClickHouse Series: Six Core MergeTree Mechanisms from the Source Code"
+title: "ClickHouse Series: The Six Core Mechanisms of MergeTree from the Source Code"
 published: 2025-09-03
-description: ""
-image: "https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress"
-tags: ["ClickHouse", "Database", "Ironman"]
-category: "software development"
+description: ''
+image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'
+tags: [ClickHouse, Database, Ironman]
+category: 'software development'
 draft: false
-lang: "en"
+lang: 'en'
 ---
 
-Over the previous 29 days of this series, we have already understood ClickHouse table engine design from the user's perspective:
+Across the first 29 days of this series, we have already understood ClickHouse table engine design from the user's perspective:
 * Why use columnar storage?
-* How does MergeTree avoid B-trees and still achieve fast queries with a min-max index?
-* How do background merges, materialized views, and TTL work?
+* If MergeTree does not use a B-tree, how does it rely on min-max indexes for fast queries?
+* How do background merges, materialized views, and TTL actually work?
 
-Today, as the closing article of the series, we are going to step into the ClickHouse GitHub source code from the **developer's perspective** and explore the internal structure of MergeTree.
+Today, as the closing article of the series, we are going to step into the ClickHouse GitHub source code from a **developer's perspective** and explore the internal structure of MergeTree.
 
-I picked six of the most important modules and functions from the vast sea of code (I love GPT 🤚😭🤚), corresponding to the "life cycle" of MergeTree: **create -> insert -> merge -> query -> move**.
+I picked out the 6 most important modules and functions from a huge codebase (thank you GPT 🤚😭🤚), corresponding to the lifecycle of MergeTree: from **creation → insertion → merge → query → movement**.
 
 ::github{repo="clickhouse/clickhouse"}
 
-This article is best read on a computer with two windows open side by side. I will point out the exact function locations along the way.
+I recommend reading this with two windows open side by side. I will specifically call out where each function lives.
 
 ## Initialization and Format Management
 
 `MergeTreeData::initializeDirectoriesAndFormatVersion(...)`
 
-This function lives in [src/Storages/MergeTree/MergeTreeData.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeData.cpp#L381)
+This function is in [src/Storages/MergeTree/MergeTreeData.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeData.cpp#L381)
 
-* It initializes the table's data directories.
+* This function is responsible for initializing the table's data directories.
 * Responsibilities:
-  * Check or create the data directory
-  * Read or write `format_version.txt` on the first non-read-only disk
+  * Check/create data directories
+  * Read or write `format_version.txt` (written to the first non-readonly disk)
   * Check whether **custom partitioning** is supported
-* Design:
-  * Ensure disk data is compatible with the program version
-  * If the version is too old, throw an exception and refuse to start
+* Design goal:
+  * Ensure on-disk data is compatible with the program version
+  * If the version is too old, throw an exception directly and block startup
 
-The following code writes `format_version.txt`. The comments explain that write-once disks are almost the same as read-only disks, such as S3 object storage. We cannot write there because they do not support move or delete operations. That would leave garbage behind after DROP and waste space.
-
+Below is the part of the code that writes `format_version.txt`. It explains why a write-once disk is effectively read-only for MergeTree (for example, S3 object storage). We cannot write to it because it does not support move or delete operations, and otherwise a later `DROP` could leave garbage behind and waste space.
 ```cpp
 /// When data path or file not exists, ignore the format_version check
 if (!attach || !read_format_version)
@@ -73,9 +72,9 @@ else
 }
 ```
 
-> Without this step, none of the later parts can be read or written correctly.
+> **Without this step, none of the later parts can be read or written correctly.**
 
-## Parts Management (Immutable Data Parts)
+## Parts Management (Immutable data parts)
 
 **Representative functions**:
 
@@ -83,40 +82,40 @@ else
 * `MergeTreeData::getDataParts(...)`
 * `MergeTreeData::renameTempPartAndReplace(...)`
 
-In MergeTree, **data is not stored as one giant table, but as a set of immutable parts**.
+In MergeTree, **data is not one complete giant table, but a collection of immutable parts**.
 
-* **On startup**: `loadDataParts` scans the disk and loads all parts into an in-memory index structure.
-* **When inserting data**: each INSERT first creates a temporary part, then after the write completes it calls `renameTempPartAndReplace` to attach the part formally under the parts directory.
-* **When querying**: `getDataParts` returns a consistent view of the parts, with snapshot-like behavior.
+* **At startup**: `loadDataParts` scans disks and loads all parts into in-memory index structures
+* **When inserting data**: every INSERT first creates a temporary part, then `renameTempPartAndReplace` publishes it into the parts directory
+* **When querying**: `getDataParts` returns a consistent view of parts (supporting a snapshot-style concept)
 
-> This is why MergeTree can support both **fast reads** and **high-concurrency writes**.
+> This is why MergeTree can support both **efficient reads** and **high-concurrency writes** at the same time.
 
 ### MergeTreeData::loadDataParts
 
-This function lives in [src/Storages/MergeTree/MergeTreeData.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeData.cpp#L2121)
+This function is in [src/Storages/MergeTree/MergeTreeData.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeData.cpp#L2121)
 
 `loadDataParts` is responsible for:
 
-1. **Scanning disks** -> finding all data directories that match the MergeTree part naming rules
-2. **Checking disk validity** -> making sure parts do not appear on undefined disks
-3. **Building a PartLoadingTree** -> organizing all parts into a tree structure that supports containment relationships, such as new parts covering old parts
-4. **Loading parts into memory** -> creating `DataPart` objects and adding them to `data_parts_indexes`
-5. **Handling abnormal cases** -> broken parts, duplicate parts, unexpected parts, and outdated parts
-6. **Statistics and monitoring** -> recording load time and load count with `ProfileEvents`
+1. **Scanning disks** → find all data directories that match MergeTree part naming rules
+2. **Checking disk validity** → ensure parts do not appear on undefined disks
+3. **Building a PartLoadingTree** → organize all parts into a tree (supporting containment relationships, for example when a new part covers an old part)
+4. **Loading parts into memory** → create `DataPart` objects and insert them into `data_parts_indexes`
+5. **Handling abnormal cases** → broken parts, duplicate parts, unexpected parts, outdated parts
+6. **Statistics and monitoring** → record load duration and counts via `ProfileEvents`
 
-#### Checking orphaned parts
+#### Check orphaned parts
 
 ```cpp
 if (!getStoragePolicy()->isDefaultPolicy() && !skip_sanity_checks ...)
 {
-    // Make sure all parts are stored on disks defined by the storage policy
-    // If a part is found on an unknown disk, throw an exception immediately
+    // Ensure all parts are located on disks defined in the storage policy
+    // If a part is found on an unknown disk, throw an Exception directly
 }
 ```
 
-> This prevents the situation where the data files are still there but the metadata can no longer point to them, keeping data consistency intact.
+> This prevents the situation where the physical data still exists but the metadata can no longer point to it, preserving consistency.
 
-#### Scanning disks and collecting parts
+#### Scan disks and collect parts
 
 ```cpp
 runner([&expected_parts, &unexpected_disk_parts, &disk_parts, this, disk_ptr]()
@@ -134,39 +133,39 @@ runner([&expected_parts, &unexpected_disk_parts, &disk_parts, this, disk_ptr]()
 });
 ```
 
-* Skip special directories such as `tmp*`, `format_version.txt`, and `detached/`.
-* Check whether a directory name can be parsed into `MergeTreePartInfo`. If not, treat it as garbage and ignore it.
-* Split parts into **expected** ones and **unexpected** ones.
+* Skip special directories such as `tmp*`, `format_version.txt`, and `detached/`
+* Check whether the directory name can be parsed into `MergeTreePartInfo` (if not, treat it as garbage and ignore it)
+* Split parts into **expected** (normal) and **unexpected** (found unexpectedly)
 
-#### Building the PartLoadingTree
+#### Build the PartLoadingTree
 
 ```cpp
 auto loading_tree = PartLoadingTree::build(std::move(parts_to_load));
 ```
 
-* Parts may have containment relationships, such as a new part covering the range of an older part.
-* PartLoadingTree helps identify the top-most, most complete parts as active parts.
+* Parts may have containment relationships between them (for example, a new part covering the range of an old part)
+* `PartLoadingTree` helps identify the top-level, most complete parts to treat as active parts
 
-#### Loading active parts
+#### Load active parts
 
 ```cpp
 auto loaded_parts = loadDataPartsFromDisk(active_parts);
 ```
 
 For each active part:
-* Check whether it is broken, for example due to missing files or compression errors
-* Check for duplicates
-* Determine the index granularity, adaptive or non-adaptive
-* Record whether it carries lightweight deletes or transaction metadata
+* Check whether it is broken (missing files, compression errors, and so on)
+* Check whether it is a duplicate
+* Determine index granularity (adaptive vs. non-adaptive)
+* Record whether it contains lightweight delete or transaction metadata
 
 > This is the key step that turns on-disk directories into `DataPart` objects.
 
-#### Handling abnormal cases
+#### Handle abnormal cases
 
-* **Broken parts**: move them to the `detached/broken-on-start/` directory
-* **Duplicate parts**: delete them, unless the storage is static
-* **Unexpected parts**: record them and spawn a background task to handle them
-* **Outdated parts**: also load them asynchronously through a background task
+* **broken parts**: move to `detached/broken-on-start/`
+* **duplicate parts**: delete them (unless on static storage)
+* **unexpected parts**: record them and let a background task handle them
+* **outdated parts**: also pass them to a background task for asynchronous loading
 
 #### Defensive check
 
@@ -175,23 +174,23 @@ if (have_non_adaptive_parts && have_adaptive_parts && !enable_mixed_granularity_
     throw Exception(...);
 ```
 
-> If a table contains both **older non-adaptive granularity parts** and **newer adaptive parts**, mixing them is not allowed by default unless `enable_mixed_granularity_parts` is enabled.
+> If the table contains both **old non-adaptive granularity parts** and **new adaptive parts**, mixed use is disallowed by default unless `enable_mixed_granularity_parts` is enabled.
 
-#### Monitoring and task registration
+#### Monitoring logs and task registration
 
 ```cpp
 LOG_DEBUG(log, "Loaded data parts ({} items) took {} seconds", data_parts_indexes.size(), watch.elapsedSeconds());
 ProfileEvents::increment(ProfileEvents::LoadedDataParts, data_parts_indexes.size());
 ```
 
-* Use logs and `ProfileEvents` to record how long part loading takes and how many parts were loaded.
-* If all disks are read-only, such as when everything is on cold storage, a periodic refresh task is started.
+* Use logs and `ProfileEvents` to record how long part loading took and how many parts were loaded
+* If all disks are readonly (for example, all of them are cold storage), a periodic task is started to refresh parts
 
 ### MergeTreeData::getDataParts
 
-This function lives in [src/Storages/MergeTree/MergeTreeData.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeData.cpp#L7640)
+This function is in [src/Storages/MergeTree/MergeTreeData.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeData.cpp#L7640)
 
-This function is short. It mainly decides **which parts should be read during a query**.
+This function is short, but it is **where query reads decide which parts to read**.
 
 ```cpp
 MergeTreeData::DataParts MergeTreeData::getDataParts(
@@ -200,17 +199,17 @@ MergeTreeData::DataParts MergeTreeData::getDataParts(
 ```
 
 * **Input parameters**
-  * `affordable_states`: allowed part states, such as active, outdated, temporary, and so on
-  * `affordable_kinds`: allowed part kinds, such as wide, compact, and in-memory
+  * `affordable_states`: allowed part states (active, outdated, temporary, ...)
+  * `affordable_kinds`: allowed part kinds (wide, compact, in-memory, ...)
 * **Return value**
-  * A `DataParts` container with all parts that satisfy the conditions
+  * A `DataParts` container containing the currently matching parts
 
 ```cpp
 auto lock = lockParts();
 ```
 
-* Acquire a lock so that `data_parts_indexes` cannot be modified while iterating.
-* This matters because parts may be moved by background merge or mutation tasks at the same time.
+* Acquire a lock so `data_parts_indexes` cannot be modified during iteration
+* Parts may be moved concurrently by background merge or mutation tasks
 
 ```cpp
 for (auto state : affordable_states)
@@ -223,15 +222,15 @@ for (auto state : affordable_states)
 }
 ```
 
-* A nested loop goes through each `(state, kind)` pair and pulls the matching range from the internal index.
-* `getDataPartsStateRange(state, kind)` returns an iterator range representing the matching parts.
-* All those parts are collected into `res`.
+* A nested loop iterates through every `(state, kind)` combination and takes the matching range from internal indexes
+* `getDataPartsStateRange(state, kind)` returns the iterator range representing current matching parts
+* All such parts are collected into `res`
 
 ### MergeTreeData::renameTempPartAndReplace
 
-This function lives in [src/Storages/MergeTree/MergeTreeData.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeData.cpp#L4810)
+This function is in [src/Storages/MergeTree/MergeTreeData.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeData.cpp#L4810)
 
-This function is mainly the **final step of the MergeTree INSERT flow**.
+This function is basically **the final step of the INSERT flow into MergeTree**.
 
 ```cpp
 MergeTreeData::DataPartsVector MergeTreeData::renameTempPartAndReplace(
@@ -241,52 +240,53 @@ MergeTreeData::DataPartsVector MergeTreeData::renameTempPartAndReplace(
 ```
 
 * **Input parameters**
-  * `part`: the freshly written **temporary part** (`tmp_xxx`)
-  * `out_transaction`: transaction object used to ensure the replacement is atomic
-  * `rename_in_transaction`: whether the rename should happen inside the transaction, optionally delayed until commit
+  * `part`: the freshly written **temporary part (`tmp_xxx`)**
+  * `out_transaction`: transaction object used to make part replacement atomic
+  * `rename_in_transaction`: whether rename should happen inside the transaction (or be delayed until commit)
 * **Return value**
-  * `covered_parts`: old parts covered or replaced by the new part, such as overlapping small parts
+  * `covered_parts`: old parts covered and replaced by the new part (for example, overlapped smaller parts)
 
 ```cpp
 auto part_lock = lockParts();
 ```
 
-* Lock the `parts` container so the replacement process is thread-safe.
-* This is necessary because background merge and mutation tasks may be working on parts at the same time.
+* Lock the `parts` container to keep replacement thread-safe
+* Background merge and mutation tasks may be operating on parts at the same time
 
 ```cpp
 renameTempPartAndReplaceImpl(part, out_transaction, part_lock, &covered_parts, rename_in_transaction);
 ```
 
-* The core logic lives in `renameTempPartAndReplaceImpl`:
-  1. Rename the `tmp_xxx` part to its real name, such as `all_1_1_0`
+* The core logic is inside `renameTempPartAndReplaceImpl`:
+  1. Actually **rename** `tmp_xxx` into a formal part name (for example, `all_1_1_0`)
   2. Update `data_parts_indexes` and insert the new part
-  3. Find old parts overlapping with it and mark them as outdated or remove them directly
-  4. If `rename_in_transaction` is enabled, these updates take effect together at transaction commit
+  3. Find old parts that overlap with it and mark them outdated or remove them directly
+  4. If `rename_in_transaction` is enabled, these updates become visible together at transaction commit
 
 ```cpp
 return covered_parts;
 ```
 
-> The old parts that were covered are returned to the caller, which is useful for later handling such as detach or delete.
+> It returns the old covered parts to the caller for later processing such as detach or delete.
 
-#### INSERT Flow
+#### INSERT flow
 
 1. The user runs `INSERT INTO table VALUES (...)`
-2. ClickHouse writes the data as a **temporary part** whose name starts with `tmp_`, so a crash in the middle of writing will not pollute the active parts
-3. After the write finishes, `renameTempPartAndReplace(...)` is called:
-   * Rename `tmp_xxx` to the final part name
+2. ClickHouse writes the data into a **temporary part** (name starts with `tmp_`) so a crash in the middle cannot pollute active parts
+3. After writing finishes, `renameTempPartAndReplace(...)` is called:
+   * Rename `tmp_xxx` into a formal part name
    * Update the in-memory index structure
-   * Remove older parts that it covers
-4. Once INSERT commits successfully, the new part becomes visible to queries
+   * Remove old parts covered by it
+4. Once the INSERT commit succeeds, the new part becomes visible to queries
 
-This gives you the following benefits:
-1. **Temporary file protection**:
-   * Every INSERT is first written as a `tmp_` part. Only when the final rename succeeds does it become visible, ensuring atomicity.
-2. **Optimistic merge**:
-   * When a new part is inserted, overlapping older parts are covered too, which keeps the state clean.
-3. **Transaction consistency**:
-   * With `rename_in_transaction`, multiple operations can commit or roll back together, supporting more complex ALTER and REPLACE operations.
+This enables the following:
+1. **Temp file protection**
+   * Every INSERT first writes a `tmp_` part and only becomes effective after the final rename succeeds, ensuring atomicity
+2. **Optimistic merge**
+   * When inserting a new part, overlapped old parts can be covered at the same time so data does not accumulate in an inconsistent state
+3. **Transaction consistency**
+   * With `rename_in_transaction`, multiple operations can commit or roll back together, supporting more complex ALTER and REPLACE flows
+
 
 ## Merge (Background Merge / Compaction)
 
@@ -295,36 +295,36 @@ This gives you the following benefits:
 * `MergeTreeBackgroundExecutor<Queue>::trySchedule(...)`
 * `MergeTask::execute(...)`
 
-The core of MergeTree is: **no updates, only new parts, with background merges later**.
+The core idea of MergeTree is: **no in-place updates, only new parts, then background merges later**.
 
-* Inserts create many small parts.
-* A background task (`tryScheduleMerge`) picks several small parts and calls `mergePartsToTemporaryPart` to merge them into one larger part.
-* During the merge process, TTL and compression policies are applied, eventually freeing disk space and speeding up queries.
+* Inserts produce many small parts
+* Background tasks (`tryScheduleMerge`) choose several small parts and call `mergePartsToTemporaryPart` to merge them into one larger part
+* During the merge, TTL and compression policies are also applied, which eventually frees disk space and speeds up reads
 
-> **This is the secret behind ClickHouse keeping high write throughput: writes are fast, and cleanup happens slowly in the background.**
+> **This is the secret behind ClickHouse's high write throughput: writes stay fast, and cleanup happens gradually in the background.**
 
 ### MergeTreeBackgroundExecutor<Queue>::trySchedule
 
-This function lives in [src/Storages/MergeTree/MergeTreeBackgroundExecutor.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeBackgroundExecutor.cpp#L140)
+This function is in [src/Storages/MergeTree/MergeTreeBackgroundExecutor.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeBackgroundExecutor.cpp#L140)
 
-This function is the **entry point for MergeTree merge and background task scheduling**.
+This function is the **entry point for scheduling MergeTree merges and background tasks**.
 
 ```cpp
 template <class Queue>
 bool MergeTreeBackgroundExecutor<Queue>::trySchedule(ExecutableTaskPtr task)
 ```
 
-* **Purpose**: try to put a background task, such as merge, mutation, or TTL cleanup, into the execution queue
-* **Return**:
-  * `true` -> scheduled successfully
-  * `false` -> rejected, possibly because the system is shutting down or the queue is full
+* **Purpose**: try to place a background task (for example merge, mutation, or TTL cleanup) into the execution queue
+* **Return value**:
+  * `true` → scheduled successfully
+  * `false` → rejected (for example because the system is shutting down or the queue is full)
 
 #### Lock protection
 
 ```cpp
 std::lock_guard lock(mutex);
 ```
-Protect the `pending` task queue from concurrent modification.
+Protects the `pending` task queue so multiple threads do not modify it at the same time.
 
 #### Check whether the current task count exceeds the limit
 
@@ -334,41 +334,42 @@ if (value.load() >= static_cast<int64_t>(max_tasks_count))
     return false;
 ```
 
-* `CurrentMetrics` tracks the current number of tasks for this executor.
-* If the count exceeds `max_tasks_count`, for example the configured limit on concurrent merges, the schedule request is rejected.
+* Use `CurrentMetrics` to monitor how many tasks this executor is currently running
+* If it exceeds `max_tasks_count` (for example the maximum number of concurrent merges), scheduling is rejected
 
-#### Put the task into the queue
+#### Push the task into the queue
 
 ```cpp
 pending.push(std::make_shared<TaskRuntimeData>(std::move(task), metric));
 ```
 
-* Wrap the incoming `task` in `TaskRuntimeData` and push it into the `pending` queue.
-* `TaskRuntimeData` carries the metric used to track task execution state.
+* Wrap the incoming `task` as `TaskRuntimeData` and push it into the `pending` queue
+* `TaskRuntimeData` carries the metric used to track the task's execution state
 
-#### Wake up a worker thread
+#### Notify a worker thread
 
 ```cpp
 has_tasks.notify_one();
 ```
 
-* Wake one waiting worker thread so it can start processing the task.
+* Wake one waiting worker thread so it can start handling the task
 
 #### Summary
 
-This function provides **non-blocking scheduling**, **resource control**, and **monitoring**. It avoids merging too many parts at once, which would otherwise flood disk I/O, and keeps all task counts visible in `CurrentMetrics` so monitoring systems can observe current merge and mutation pressure.
+This function provides **non-blocking scheduling**, **resource control**, and **monitoring**. It prevents too many parts from being merged at once and blowing up disk I/O. All task counts are reflected in `CurrentMetrics`, making current merge and mutation pressure visible to the monitoring system.
+
 
 ### MergeTreeDataMergerMutator::mergePartsToTemporaryPart
 
-This function lives in [src/Storages/MergeTree/MergeTreeDataMergerMutator.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeDataMergerMutator.cpp#L557)
+This function is in [src/Storages/MergeTree/MergeTreeDataMergerMutator.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeDataMergerMutator.cpp#L557)
 
-This function is the **entry point of MergeTree merging**. Let's break it down step by step:
+This function is the **entry point for MergeTree merges**. Let's break it down step by step:
 
-* **Purpose**: create a `MergeTask` that represents one merge or mutation job
+* **Purpose**: create a `MergeTask`, which represents one merge or mutation task
 * **Location**: `src/Storages/MergeTree/MergeTreeDataMergerMutator.cpp`
-* **Return value**: `MergeTaskPtr`, a pointer to the newly created `MergeTask`
+* **Return value**: `MergeTaskPtr` (a pointer to the newly created `MergeTask`)
 
-**Note**: this part only **constructs** the `MergeTask`. The actual merge logic runs inside `MergeTask::execute()`.
+**Important**: this stage only **constructs** the `MergeTask`. The actual merge logic runs inside `MergeTask::execute()`.
 
 #### Parameters
 ```cpp
@@ -391,26 +392,26 @@ const String & suffix
 ```
 
 * **`future_part`**
-  * The new part that will be produced, describing the source parts and the output name
-  * It is the blueprint for the merge
+  * The new part that will be produced, describing source parts and output name
+  * It is the blueprint of the merge plan
 * **`metadata_snapshot`**
-  * A snapshot of table metadata, including columns, indexes, TTL, and more
+  * A snapshot of table metadata, including columns, indexes, TTL, and so on
 * **`merge_entry / projection_merge_list_element`**
-  * Track the merge record in `system.merges` or `system.part_log` for monitoring
+  * Used to track this merge in `system.merges` (or `system.part_log`) for monitoring
 * **`holder`**
-  * Table lock, ensuring the merge does not conflict with DDL
+  * A table lock to ensure the merge does not conflict with DDL
 * **`space_reservation`**
-  * Reserved disk space so the merge does not fail because of insufficient capacity
+  * Reserved disk space so the merge does not fail partway through because of insufficient space
 * **`deduplicate / deduplicate_by_columns`**
-  * Whether deduplication is needed, for example with `ReplacingMergeTree` or `OPTIMIZE TABLE ... DEDUPLICATE`
+  * Whether deduplication is needed (relevant for `ReplacingMergeTree` and `OPTIMIZE TABLE ... DEDUPLICATE`)
 * **`cleanup`**
   * Whether cleanup such as TTL should run during the merge
 * **`merging_params`**
-  * MergeTree merge parameters, such as normal, Collapsing, VersionedCollapsing, Summing, or Aggregating
+  * MergeTree merge parameters (normal, Collapsing, VersionedCollapsing, Summing, Aggregating, and more)
 * **`txn`**
-  * Transaction support for multi-statement transactions or MVCC
+  * Transaction context that supports multi-statement transactions or MVCC
 * **`need_prefix / parent_part / suffix`**
-  * Control how the new part is named, especially for mutation and projection merge scenarios
+  * Control how the new part is named, especially for mutations and projection merges
 
 #### Conditional logic
 
@@ -422,7 +423,7 @@ if (future_part->isResultPatch())
 }
 ```
 
-* If this is a **patch merge** such as a mutation patch, adjust `merging_params` and fetch metadata again from the source part.
+* If this is a **patch merge** (for example, a mutation patch), adjust `merging_params` and reload metadata from the source part
 
 #### Return value
 
@@ -430,42 +431,43 @@ if (future_part->isResultPatch())
 return std::make_shared<MergeTask>(...);
 ```
 
-* Finally, a `MergeTask` is created with all the context needed for merging:
-  * Which parts to merge (`future_part`)
-  * How to merge (`merging_params`, `deduplicate`, `cleanup`)
-  * Resources needed (`space_reservation`, `holder`)
-  * Logging and tracing (`merge_entry`, `projection_merge_list_element`)
+* Finally create a `MergeTask` containing all merge context:
+  * which parts to merge (`future_part`)
+  * how to merge them (`merging_params`, `deduplicate`, `cleanup`)
+  * resources needed during the merge (`space_reservation`, `holder`)
+  * log tracing (`merge_entry`, `projection_merge_list_element`)
 
-> **After that, the background thread pool calls `MergeTask::execute()`, which actually reads the source parts, merges them, and outputs the new part.**
+> **Later, the background thread pool will call `MergeTask::execute()` and actually read the source parts, merge them, and produce a new temporary part.**
 
 So the role of `mergePartsToTemporaryPart(...)` is:
 
-1. **It does not merge the data directly**. It **builds a MergeTask**.
-2. The MergeTask carries all the context: parts, metadata, transaction state, disk space, deduplication, TTL, and logs.
-3. The background executor schedules and runs the MergeTask, eventually producing a new **temporary part**.
-4. After the temporary part succeeds, `renameTempPartAndReplace(...)` turns it into a formal part.
+1. **It does not merge data directly**, but instead **creates a MergeTask**
+2. The MergeTask carries all context: parts, metadata, transaction, disk space, deduplication, TTL, and logs
+3. The Background Executor schedules and runs this MergeTask, producing a new **temporary part**
+4. After the temporary part succeeds, `renameTempPartAndReplace(...)` turns it into a formal part
+
 
 ### MergeTask::execute(...)
 
-This function lives in [src/Storages/MergeTree/MergeTask.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTask.cpp#L1590)
+This function is in [src/Storages/MergeTree/MergeTask.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTask.cpp#L1590)
 
-This is the **core function that actually executes MergeTree merges**.
+This function is the **core function where MergeTree actually performs a merge**.
 
-* It represents the execution logic of one merge or mutation task.
-* **Feature**: the merge is not done in one shot. Instead, it is split into **multiple stages** and executed step by step.
+* It represents the execution logic of one **merge or mutation** task
+* **Characteristic**: the merge is not done all at once, but is split into **multiple stages**
 * Return value:
-  * `true` -> there are more stages left and the task still needs to continue
-  * `false` -> all stages are finished and the merge is complete
+  * `true` → there are still later stages to run
+  * `false` → all stages are complete, and the merge is finished
 
-#### Fetch the current stage
+#### Get the current stage
 
 ```cpp
 chassert(stages_iterator != stages.end());
 const auto & current_stage = *stages_iterator;
 ```
 
-* `MergeTask` owns a `stages` vector, following a pipeline-style design.
-* `stages_iterator` points to the stage currently being executed.
+* `MergeTask` owns a `stages` vector, conceptually a pipeline
+* `stages_iterator` points to the stage currently being executed
 
 #### Try to execute the current stage
 
@@ -474,10 +476,10 @@ if (current_stage->execute())
     return true;
 ```
 
-* If the current stage is not done yet, return `true`, meaning the next round still has to continue the same stage.
-* Note that a stage may itself be expensive, such as reading, compressing, or writing, so it can be split across multiple runs.
+* If the current stage is not finished yet, return `true` so it continues next time
+* Note: a stage itself can be expensive (such as reading, compressing, or writing), so it may run in batches
 
-#### Stage finished, record elapsed time
+#### Stage finished → record elapsed time
 
 ```cpp
 UInt64 current_elapsed_ms = global_ctx->merge_list_element_ptr->watch.elapsedMilliseconds();
@@ -485,10 +487,10 @@ UInt64 stage_elapsed_ms = current_elapsed_ms - global_ctx->prev_elapsed_ms;
 global_ctx->prev_elapsed_ms = current_elapsed_ms;
 ```
 
-* Record the time difference since the previous checkpoint, which gives the time spent in this stage.
-* `global_ctx` is the merge task's global context, including the ProfileEvents tracker.
+* Record the time delta since the previous checkpoint as the time spent in this stage
+* `global_ctx` is the global context of the merge task and contains ProfileEvents trackers
 
-#### Update `ProfileEvents`
+#### Update ProfileEvents
 
 ```cpp
 if (global_ctx->parent_part == nullptr)
@@ -498,22 +500,330 @@ if (global_ctx->parent_part == nullptr)
 }
 ```
 
-* If this is not a projection merge, update the total elapsed time statistics.
-* Each stage has its own `ProfileEvent`, such as `MergeReadBlocks` or `MergeWriteBlocks`.
+* If this is not a projection merge, update total time statistics
+* Every stage has a matching ProfileEvent such as `MergeReadBlocks` or `MergeWriteBlocks`
 
 #### Move to the next stage
 
 ```cpp
-+stages_iterator;
+++stages_iterator;
 if (stages_iterator == stages.end())
     return false;
 ```
 
-* Advance the iterator to the next stage.
-* If we have reached `stages.end()`, the merge is fully complete and the function returns `false`.
+* Advance the iterator to the next stage
+* If `stages.end()` is reached, the merge is fully complete, so return `false`
 
 #### Initialize the next stage
 
 ```cpp
 (*stages_iterator)->setRuntimeContext(std::move(next_stage_context), global_ctx);
+return true;
 ```
+
+* Pass the output context of the previous stage into the next stage, like a pipeline
+* Return `true` to indicate there is still more work to run
+
+#### Exception handling
+
+```cpp
+catch (...)
+{
+    merge_failures.withLabels({String(ErrorCodes::getName(getCurrentExceptionCode()))}).increment();
+    throw;
+}
+```
+
+* If the merge fails (I/O error, disk full, corrupted data, and so on), record the failure count and rethrow the exception
+* `merge_failures` is a metrics counter that tracks failure categories
+
+
+## Query Read Path
+
+**Representative functions**:
+
+* [`MergeTreeDataSelectExecutor::read(...)`](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeDataSelectExecutor.cpp#L173)
+* [`MergeTreeDataSelectExecutor::readFromParts(...)`](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeDataSelectExecutor.cpp#L1283)
+
+When a user runs `SELECT`, the query flow enters `MergeTreeDataSelectExecutor::read`:
+
+1. Choose parts that match the partition scope
+2. Use indexes to prune granules (for example min-max indexes)
+3. Call `readFromParts` to read the actual data blocks needed
+4. Send the data into the QueryPlan pipeline (Filter, Join, Aggregate, Sort, and more)
+
+```cpp
+const auto & snapshot_data = assert_cast<const MergeTreeData::SnapshotData &>(*storage_snapshot->data);
+```
+
+* Every query gets a `StorageSnapshot`, which contains the currently visible parts and mutation snapshot of the table
+* `snapshot_data.parts` → the parts this query will read
+* `snapshot_data.mutations_snapshot` → ensures the query executes against one consistent version
+
+```cpp
+auto step = readFromParts(
+    snapshot_data.parts,
+    snapshot_data.mutations_snapshot,
+    column_names_to_return,
+    storage_snapshot,
+    query_info,
+    context,
+    max_block_size,
+    num_streams,
+    max_block_numbers_to_read,
+    /*merge_tree_select_result_ptr=*/ nullptr,
+    enable_parallel_reading);
+```
+
+* **Input parameters**:
+  * `parts` → the data fragments to read
+  * `mutations_snapshot` → guarantees consistency
+  * `column_names_to_return` → read only required columns
+  * `query_info` → contains conditions such as WHERE, ORDER BY, and LIMIT
+  * `max_block_size` → max rows per block, controlling batch size
+  * `num_streams` → number of threads reading in parallel
+  * `enable_parallel_reading` → whether parallel reading from replicas is allowed
+
+* **Return value**:
+  * `step` → a `QueryPlanStep` (`ReadFromMergeTree`) that represents how to read data from MergeTree parts
+
+```cpp
+auto plan = std::make_unique<QueryPlan>();
+if (step)
+    plan->addStep(std::move(step));
+return plan;
+```
+
+* Create an empty `QueryPlan`
+* If a read step is produced successfully, add it to the plan
+* Return the complete QueryPlan to the pipeline for execution
+
+## Indexes and Filtering (Index & Skipping)
+
+**Representative functions**:
+
+* `MergeTreeWhereOptimizer::optimize(...)`
+
+During query execution, ClickHouse does not do a full table scan. Instead, it relies on:
+
+* **Primary key indexes** (sorted min-max ranges)
+* **Data Skipping Indexes** (Bloom filters, Set indexes, Token indexes)
+
+`MergeTreeWhereOptimizer::optimize` rewrites WHERE conditions to make the best possible use of indexes, pruning unnecessary granules so only required data is scanned.
+
+This function is in [src/Storages/MergeTree/MergeTreeWhereOptimizer.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeWhereOptimizer.cpp#L104C1-L142C2)
+
+This function analyzes `SELECT ... WHERE ...` conditions, decides which parts can be pushed down into **PREWHERE**, and rewrites the AST by moving some conditions there.
+
+Characteristics of PREWHERE:
+* **Read part of the columns first, filter out most rows, then read the remaining columns**
+* It is especially effective for columnar storage query efficiency
+
+```cpp
+if (!select.where() || select.prewhere())
+    return;
+```
+
+* If there is no WHERE clause, or PREWHERE already exists, there is nothing to optimize
+
+```cpp
+auto block_with_constants = KeyCondition::getBlockWithConstants(...);
+```
+
+* Collect constants used in the query to support condition pushdown
+
+```cpp
+WhereOptimizerContext where_optimizer_context;
+where_optimizer_context.context = context;
+where_optimizer_context.array_joined_names = determineArrayJoinedNames(select);
+where_optimizer_context.move_all_conditions_to_prewhere = context->getSettingsRef()[Setting::move_all_conditions_to_prewhere];
+...
+```
+
+* Prepare the context needed by the optimizer, including:
+
+  * Whether all conditions should be forcibly moved to PREWHERE
+  * Whether condition reordering is allowed
+  * Whether statistics should be used
+  * Whether the query includes `FINAL` (which may affect pushdown eligibility)
+
+```cpp
+RPNBuilderTreeContext tree_context(context, std::move(block_with_constants), {});
+RPNBuilderTreeNode node(select.where().get(), tree_context);
+auto optimize_result = optimizeImpl(node, where_optimizer_context);
+```
+
+* Parse the WHERE clause into a **boolean expression tree (RPN – Reverse Polish Notation)**
+* Call `optimizeImpl` to try to push down suitable conditions
+* The result includes:
+
+  * `where_conditions` (conditions that remain in WHERE)
+  * `prewhere_conditions` (conditions moved into PREWHERE)
+
+```cpp
+auto where_filter_ast = reconstructAST(optimize_result->where_conditions);
+auto prewhere_filter_ast = reconstructAST(optimize_result->prewhere_conditions);
+
+select.setExpression(ASTSelectQuery::Expression::WHERE, std::move(where_filter_ast));
+select.setExpression(ASTSelectQuery::Expression::PREWHERE, std::move(prewhere_filter_ast));
+```
+
+* Reassemble the result back into the AST
+* The SELECT query now becomes:
+
+  ```sql
+  SELECT ...
+  PREWHERE <part of the conditions>
+  WHERE <remaining conditions>
+  ```
+
+```cpp
+LOG_DEBUG(
+    log,
+    "MergeTreeWhereOptimizer: condition \"{}\" moved to PREWHERE",
+    select.prewhere()->formatForLogging(...));
+```
+
+* Write a log entry for the moved PREWHERE condition
+
+> **This is one of the keys to second-level queries over tens of billions of rows.**
+
+## TTL and Data Movement
+
+**Representative functions**:
+
+* `MergeTreeData::moveParts(...)`
+* `MergeTreeData::removeOutdatedPartsAndDirs(...)`
+
+MergeTree supports TTL (Time-to-Live), allowing data to expire automatically or move across storage tiers:
+
+* **Delete old data** → `removeOutdatedPartsAndDirs` cleans up expired parts
+* **Hot/cold tiering** → `moveParts` moves old data to slower disks (HDD, S3) while keeping fresh data on SSD
+
+> **This makes MergeTree more than just an OLAP table. It also provides data lifecycle management.**
+
+### `MergeTreeData::moveParts(...)`
+
+This function is in [src/Storages/MergeTree/MergeTreeWhereOptimizer.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/src/Storages/MergeTree/MergeTreeWhereOptimizer.cpp#L104C1-L142C2)
+
+It physically moves parts between disks based on the StoragePolicy (for example SSD → HDD, or more cost-efficient tiers).
+
+```cpp
+LOG_INFO(log, "Got {} parts to move.", moving_tagger->parts_to_move.size());
+MovePartsOutcome result{MovePartsOutcome::PartsMoved};
+```
+
+Record how many parts are going to be moved this time, and initially assume the result will be successful.
+
+```cpp
+for (const auto & moving_part : moving_tagger->parts_to_move)
+```
+
+Each part must be cloned and replaced.
+
+```cpp
+auto moves_list_entry = getContext()->getMovesList().insert(...);
+```
+
+Update the system table `system.moves` so users can observe which parts are currently being moved.
+
+```cpp
+if (supportsReplication() && disk->supportZeroCopyReplication() && (*settings)[MergeTreeSetting::allow_remote_fs_zero_copy_replication])
+```
+
+If the table is ReplicatedMergeTree and zero-copy replication is enabled:
+  * Multiple replicas **cannot move the same part at the same time**, otherwise duplicate copies may be created
+  * A **ZooKeeper / Keeper zero-copy lock** is used for mutual exclusion
+
+```cpp
+auto lock = tryCreateZeroCopyExclusiveLock(moving_part.part->name, disk);
+if (!lock)
+{
+    result = MovePartsOutcome::MoveWasPostponedBecauseOfZeroCopy;
+    break;
+}
+```
+
+If the lock cannot be acquired, the move is postponed to avoid contention.
+
+```cpp
+cloned_part = parts_mover.clonePart(moving_part, read_settings, write_settings);
+if (lock->isLocked())
+    parts_mover.swapClonedPart(cloned_part);
+```
+
+* If the lock is still valid → clone the part, then replace it
+* If the lock becomes invalid during cloning → postpone and retry later
+
+```cpp
+cloned_part = parts_mover.clonePart(moving_part, read_settings, write_settings);
+parts_mover.swapClonedPart(cloned_part);
+```
+
+Directly clone → swap, completing the part move.
+
+
+```cpp
+write_part_log({});
+```
+
+Write into `system.part_log`, recording this `MOVE_PART` operation, including duration and source/destination disk.
+
+
+```cpp
+catch (...)
+{
+    write_part_log(ExecutionStatus::fromCurrentException("", true));
+    throw;
+}
+```
+
+If the move fails, record the error and rethrow the exception.
+
+## Closing
+
+This series finally comes to an end, graduating together with my summer internship XD (not really, I will still keep working on it after the semester starts). I hope you all enjoyed the series.
+
+![](../../../assets/posts/clickhouse-mergetree-sourcecode-introduction.png)
+
+Someone asked me before: "Vic, why did you want to start the Ironman challenge?" At the time, I wanted to use the pressure of a daily writing challenge to force myself to quickly dive deep into a service. I also noticed that there were very few ClickHouse articles in the market, and even when they existed, most of them focused only on usage. I may have been one of the first people to start writing about lower-level principles and architecture. Maybe the main audience is usually data scientists, so there are fewer backend engineers like me focusing on this?
+
+ClickHouse is a fascinating data-processing beast at the TB-to-PB scale, but only if you have strong enough fundamentals to think through every scenario when designing tables. With the right table design strategy based on business logic and data types, it becomes extremely powerful.
+
+During this internship, I migrated data for the company from the cloud. One single table in PostgreSQL was originally around **400GB**, but by using ClickHouse with the right configuration strategy, I achieved roughly **5x to 86x compression** depending on column data types. That saved the company **about 360GB** of storage cost on a single table while also improving query efficiency, which helped internal data analysis and automation work.
+
+This entire series also indirectly verifies one thing: **why ClickHouse can handle both high-ingest workloads and large-scale queries at the same time, and why it has become a mainstream OLAP database service in the industry**.
+
+
+### ClickHouse Series Complete:
+
+1. [ClickHouse Series: What Is ClickHouse? How It Differs from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)
+2. [ClickHouse Series: Why Does ClickHouse Choose Column-based Storage? The Core Differences Between Row-based and Column-based Storage](https://blog.vicwen.app/posts/clickhouse-column-row-based-storage/)
+3. [ClickHouse Series: ClickHouse Storage Engine - MergeTree](https://blog.vicwen.app/posts/clickhouse-mergetree-engine)
+4. [ClickHouse Series: How Compression and Data Skipping Indexes Greatly Speed Up Queries](https://blog.vicwen.app/posts/clickhouse-compression-skipping-index/)
+5. [ClickHouse Series: ReplacingMergeTree and Data Deduplication](https://blog.vicwen.app/posts/clickhouse-replacingmergetree-deduplication/)
+6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
+7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
+8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
+9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
+11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
+12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)
+13. [ClickHouse Series: Distributed Tables and Distributed Query Architecture](https://blog.vicwen.app/posts/clickhouse-distributed-table-architecture/)
+14. [ClickHouse Series: High Availability and Zero-Downtime Upgrades with Replicated Tables](https://blog.vicwen.app/posts/clickhouse-replication-failover/)
+15. [ClickHouse Series: Building a Real-Time Data Streaming Pipeline with Kafka Integration](https://blog.vicwen.app/posts/clickhouse-kafka-data-streaming-pipeline/)
+16. [ClickHouse Series: Best Practices for Batch Imports (CSV, Parquet, Native Format)](https://blog.vicwen.app/posts/clickhouse-batch-import/)
+17. [ClickHouse Series: Integrating ClickHouse with External Data Sources (PostgreSQL)](https://blog.vicwen.app/posts/clickhouse-external-data-integration/)
+18. [ClickHouse Series: How to Improve Query Performance with system.query_log and EXPLAIN](https://blog.vicwen.app/posts/clickhouse-query-log-explain/)
+19. [ClickHouse Series: Advanced Query Acceleration with Projections](https://blog.vicwen.app/posts/clickhouse-projections-optimization/)
+20. [ClickHouse Series: Sampling Queries and Statistical Techniques](https://blog.vicwen.app/posts/clickhouse-sampling-statistics/)
+21. [ClickHouse Series: TTL Data Cleanup and Storage Cost Optimization](https://blog.vicwen.app/posts/clickhouse-ttl-storage-management/)
+22. [ClickHouse Series: Storage Policies and Tiered Disk Strategy](https://blog.vicwen.app/posts/clickhouse-storage-policies/)
+23. [ClickHouse Series: Table Design and Storage Optimization Details](https://blog.vicwen.app/posts/clickhouse-schemas-storage-improvement/)
+24. [ClickHouse Series: Building Visual Monitoring with Grafana Integration](https://blog.vicwen.app/posts/clickhouse-grafana-dashboard/)
+25. [ClickHouse Series: Query Optimization Case Studies](https://blog.vicwen.app/posts/clickhouse-select-optimization/)
+26. [ClickHouse Series: Integrating with BI Tools (Power BI)](https://blog.vicwen.app/posts/clickhouse-bi-integration/)
+27. [ClickHouse Series: ClickHouse Cloud vs. Self-Hosted Deployments](https://blog.vicwen.app/posts/clickhouse-cloud-vs-self-host/)
+28. [ClickHouse Series: Implementing Database Security and RBAC](https://blog.vicwen.app/posts/clickhouse-security-rbac/)
+29. [ClickHouse Series: Deploying a Distributed Architecture on Kubernetes](https://blog.vicwen.app/posts/clickhouse-operator-kubernates/)
+30. [ClickHouse Series: The Six Core Mechanisms of MergeTree from the Source Code](https://blog.vicwen.app/posts/clickhouse-mergetree-sourcecode-introduction/)

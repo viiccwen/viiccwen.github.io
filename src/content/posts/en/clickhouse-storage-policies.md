@@ -150,7 +150,7 @@ WHERE policy_name = 'tiered_policy';
 
 ## Conclusion
 
-ClickHouse Storage Policies are not just a disk resource management tool. They are a core weapon for optimizing storage cost at scale. If designed correctly, they give your ClickHouse cluster automatic storage tiering along with an excellent balance between performance and cost.
+ClickHouse Storage Policies are more than a disk resource management tool. They are a core tool for optimizing storage cost at scale. If designed well, they give your ClickHouse cluster automatic storage tiering along with a strong balance between performance and cost.
 
 ### ClickHouse Series Updates:
 1. [ClickHouse Series: What Is ClickHouse? How It Differs from Traditional OLAP/OLTP Databases](https://blog.vicwen.app/posts/what-is-clickhouse/)

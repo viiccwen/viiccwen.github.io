@@ -9,15 +9,15 @@ draft: false
 lang: "en"
 ---
 
-For many CS students, the fastest path to an internship usually looks the same: grind LeetCode, submit resumes, and build side projects. And after sending out at least 50 applications, **what often comes back is just a long stream of rejection emails**. That has practically become part of the standard computer science experience.
+For many CS students, the fastest path to an internship usually looks the same: grind LeetCode, submit resumes, and build side projects. And after sending out at least 50 applications, **what often comes back is just a string of rejection emails**. That has practically become part of the standard computer science experience.
 
 <img src="https://media1.tenor.com/m/zA1Va-a2z8MAAAAd/unemployed-final.gif" width="40%" style="display: block; margin: 0 auto;" />
 
-But as the title suggests, I ended up taking a very different route. It was rougher, less predictable, and definitely not the mainstream choice. Instead of putting most of my time into interview prep, I chose to invest in open source projects and technical communities. Starting as a contributor nobody knew, I slowly built up experience, credibility, and impact. In the end, that path led me to a SWE Intern offer from Taiwan Mobile.
+But as the title suggests, I ended up taking a very different route. It was rougher, less predictable, and definitely not the mainstream choice. Instead of putting most of my time into interview prep, I chose to invest in open-source projects and technical communities. Starting as a contributor nobody knew, I slowly built up experience, credibility, and impact. In the end, that path led me to a SWE Intern offer from Taiwan Mobile.
 
 ## Where It Started
 
-At that time, I was trying everything most students try: keeping my GPA up, building side projects, learning relevant technologies, and even joining communities and speaking at events. But the reality was simple: after sending application after application, I was still getting mostly rejections. It was frustrating. You feel like you are doing a lot, but none of it seems to be turning into actual opportunities.
+At that time, I was trying everything most students try: keeping my GPA up, building side projects, learning relevant technologies, and even joining communities and speaking at events. But the reality was simple: after sending application after application, I was still getting mostly rejections. It was frustrating. You feel like you are doing a lot, but none of it seems to turn into actual opportunities.
 
 My path into open source started during a previous internship, where I first worked with [Apache Airflow](https://github.com/apache/airflow). At first, I found a bug and thought I would do what most people do: open an issue and wait for someone else to respond. But then I became curious. Why did the bug happen in the first place? So I started reading the source code, used AI to help me narrow down the cause, and eventually submitted a pull request that got merged. After that, I also contributed several PRs to [dag-factory](https://github.com/astronomer/dag-factory/), including one that involved a breaking change.
 

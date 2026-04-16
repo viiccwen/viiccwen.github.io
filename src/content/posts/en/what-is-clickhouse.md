@@ -19,8 +19,8 @@ It is designed mainly for **real-time analytics** and can process **PB-scale** d
 
 ![ClickHouse Architecture](https://clickhouse.com/docs/assets/ideal-img/_vldb2024_2_Figure_0.ab9606a.1024.png)
 
-The overall design of ClickHouse is very clear: its core goal is high-performance reads, and through distributed architecture plus storage optimizations, it makes second-level queries possible even on PB-scale data.
-From data ingestion, storage, and indexing to query results, ClickHouse uses a storage engine architecture optimized specifically for OLAP workloads.
+The overall design of ClickHouse is straightforward: it is built around high-performance reads, and through distributed architecture plus storage optimizations, it makes second-level queries possible even on PB-scale data.
+From data ingestion and storage to indexing and query results, ClickHouse uses a storage engine architecture optimized specifically for OLAP workloads.
 
 You can simplify the pipeline like this:
 
@@ -70,8 +70,8 @@ Confused? No worries. By the end of this series, it will all make sense 😎
 ## Differences Between ClickHouse and OLTP Databases (e.g. MySQL, PostgreSQL)
 
 1. OLTP databases focus on ACID transaction integrity and real-time processing with frequent writes.
-2. ClickHouse is better suited for **heavy read queries** with **infrequent real-time updates** (for example, reporting queries and BI analytics).
-3. Common OLTP UPDATE/DELETE operations are non-real-time in ClickHouse and are handled through the Mutation mechanism.
+2. ClickHouse is better suited for **heavy read queries** with **infrequent real-time updates** such as reporting queries and BI analytics.
+3. Common OLTP `UPDATE` / `DELETE` operations are non-real-time in ClickHouse and are handled through the Mutation mechanism.
 
 ### ClickHouse Series Updates:
 
@@ -83,7 +83,7 @@ Confused? No worries. By the end of this series, it will all make sense 😎
 6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
 7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
-9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+9. [ClickHouse Series: How Primary Keys, Sorting Keys, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
 10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)

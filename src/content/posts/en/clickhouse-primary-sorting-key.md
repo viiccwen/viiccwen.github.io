@@ -1,5 +1,5 @@
 ---
-title: "ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work"
+title: "ClickHouse Series: How Primary Keys, Sorting Keys, and Granule Indexes Work"
 published: 2025-08-12
 description: ""
 image: "https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress"
@@ -9,12 +9,12 @@ draft: false
 lang: "en"
 ---
 
-In ClickHouse's query acceleration mechanism, in addition to Partition Pruning for coarse filtering, the other key mechanism for fine-grained scanning is **Primary Key (sorted index)**, **Sorting Key**, and **Granule index**.
+In ClickHouse's query acceleration mechanism, in addition to Partition Pruning for coarse filtering, the other key mechanism for fine-grained scanning is the **Primary Key**, **Sorting Key**, and **Granule index**.
 
 ## What is a Primary Key?
 
 In ClickHouse, the Primary Key is different from the "unique constraint" in traditional OLTP databases. It **does not guarantee uniqueness and does not automatically build an index tree such as a B-Tree**.
-The ClickHouse Primary Key is used to **determine the physical ordering of data on disk (Clustered Index)**, and it is the main indexing basis MergeTree uses when searching data.
+The ClickHouse Primary Key determines the physical ordering of data on disk and serves as the main indexing basis MergeTree uses when searching data.
 
 ### Characteristics:
 
@@ -41,7 +41,7 @@ Here the Primary Key is `(user_id, order_date)`, and the data is written to disk
 ## What is a Sorting Key?
 
 * **Sorting Key = the set of columns specified by the `ORDER BY` clause.**
-* In ClickHouse, the Sorting Key and the Primary Key are the same thing, just named differently (some docs use the terms interchangeably).
+* In ClickHouse, the Sorting Key and the Primary Key are the same thing, just named differently, and some docs use the terms interchangeably.
 * The Sorting Key determines the physical ordering of data inside a Data Part and affects query pruning efficiency.
 
 ### Summary:
@@ -102,14 +102,14 @@ This pruning step is the key reason ClickHouse can scan only a tiny amount of da
 
 ## How sparse primary indexes work
 
-ClickHouse's Primary Key is not a full index like a B-Tree in traditional databases. Instead, it is designed as a **Sparse index**, using Granules to filter large datasets quickly.
+ClickHouse's Primary Key is not a full index like a B-Tree in traditional databases. Instead, it is designed as a **sparse index**, using Granules to filter large datasets quickly.
 
 ### How it works:
 
 1. **Each Granule stores only the first row's Primary Key value**: for example, with the default Granule size of 8192 rows, the index only records the first row's primary key value in each Granule.
 2. **The sparse index is tiny and can fit entirely in memory**, so even if the dataset contains hundreds of billions of rows, it still uses very little memory.
 3. **Each MergeTree Data Part has its own Primary Index**, and the query compares them separately for the best pruning effect.
-4. **During a query, ClickHouse compares the WHERE clause with the sparse Primary Index to match Granule ranges**:
+4. **During a query, ClickHouse compares the `WHERE` clause with the sparse Primary Index to match Granule ranges**:
 
    * Granules outside the condition range are skipped immediately.
    * Only Granules inside the range are read for further filtering.
@@ -189,7 +189,7 @@ Primary Key and Granule indexes are the core technologies that allow ClickHouse 
 6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
 7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
-9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+9. [ClickHouse Series: How Primary Keys, Sorting Keys, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
 10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)

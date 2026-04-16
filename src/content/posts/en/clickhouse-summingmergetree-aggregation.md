@@ -9,7 +9,7 @@ draft: false
 lang: "en"
 ---
 
-One day, while grinding away at work and living the office-drone life, you realize you need a lot of "numeric summation" and "grouped aggregation statistics" - things like daily active users, hourly traffic metrics, and real-time counters. ClickHouse offers an extremely efficient aggregation tool for exactly this use case: **SummingMergeTree**.
+When you spend a lot of time on dashboards and reports, you quickly run into the need for numeric totals and grouped aggregation statistics, like daily active users, hourly traffic metrics, and real-time counters. ClickHouse offers an extremely efficient aggregation tool for exactly this use case: **SummingMergeTree**.
 
 ## What is SummingMergeTree?
 
@@ -45,7 +45,7 @@ INSERT INTO daily_metrics VALUES ('2025-08-01', 'Home', 200, 25);
 INSERT INTO daily_metrics VALUES ('2025-08-01', 'Contact', 50, 5);
 ```
 
-When you query it, you still see all rows:
+A regular query still shows all rows before the background merge runs:
 
 ```sql
 SELECT * FROM daily_metrics WHERE date = '2025-08-01';
@@ -83,7 +83,7 @@ Querying again gives:
 
 ## GROUP BY rules
 
-The deduplication and aggregation logic of SummingMergeTree is based on the **Primary Key columns**, and numeric columns are summed.
+The aggregation logic of SummingMergeTree is based on the **Primary Key columns**, and numeric columns are summed.
 
 * `ORDER BY` columns = GROUP BY key
 * Only numeric columns (`Int`, `Float`) are automatically summed
@@ -150,7 +150,7 @@ SummingMergeTree gives you a simple yet powerful way to aggregate data, and it i
 6. [ClickHouse Series: SummingMergeTree for Data Aggregation Use Cases](https://blog.vicwen.app/posts/clickhouse-summingmergetree-aggregation/)
 7. [ClickHouse Series: Materialized Views for Real-Time Aggregation Queries](https://blog.vicwen.app/posts/clickhouse-materialized-view/)
 8. [ClickHouse Series: Partitioning Strategy and Partition Pruning Explained](https://blog.vicwen.app/posts/clickhouse-partition-pruning/)
-9. [ClickHouse Series: How Primary Key, Sorting Key, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
+9. [ClickHouse Series: How Primary Keys, Sorting Keys, and Granule Indexes Work](https://blog.vicwen.app/posts/clickhouse-primary-sorting-key/)
 10. [ClickHouse Series: CollapsingMergeTree and Best Practices for Logical Deletion](https://blog.vicwen.app/posts/clickhouse-collapsingmergetree/)
 11. [ClickHouse Series: VersionedCollapsingMergeTree for Version Control and Conflict Resolution](https://blog.vicwen.app/posts/clickhouse-versioned-collapsingmergetree/)
 12. [ClickHouse Series: Advanced Uses of AggregatingMergeTree for Real-Time Metrics](https://blog.vicwen.app/posts/clickhouse-aggregatingmergetree/)

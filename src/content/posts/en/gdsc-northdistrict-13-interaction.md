@@ -35,7 +35,7 @@ Was the event worth it? All I can say is that this was probably **one of the dec
 
 # Each School's GDSC Sharing
 
-I originally thought NTUST GDSC already had a pretty packed schedule of activities, but it turned out there is always someone even more intense. Some of the schools, like NTNU, NCCU, and Tamkang, had so many project development results and competition experiences that it honestly felt a bit overwhelming. You could clearly see how much emphasis they placed on club participation and technical depth. Seeing that whole lineup of projects gave me something to aspire to and also gave me a goal for myself: I hope that **during winter break I can find people to develop projects with and also complete my own portfolio project independently**, so I can add some highlights to my background.
+I originally thought NTUST GDSC already had a pretty packed schedule of activities, but it turned out there are always groups that are even more intense. Some of the schools, like NTNU, NCCU, and Tamkang, had so many project development results and competition experiences that it honestly felt a bit overwhelming. You could clearly see how much emphasis they placed on club participation and technical depth. Seeing that whole lineup of projects gave me something to aspire to and also gave me a goal for myself: I hope that **during winter break I can find people to develop projects with and also complete my own portfolio project independently**, so I can add some highlights to my background.
 
 # Firebase Auth (Instructor Li Zhi-Wei)
 
