@@ -11,18 +11,18 @@ lang: 'en'
 
 # Preface
 
-This year has probably been the one that changed me the most and brought the most things into my life so far. Starting from 2024, I also want to make it a habit to record what I saw and experienced in the previous year, so that the people, events, things that changed me, helped me, or left unforgettable memories can be saved for my future self.
+This year was probably the one that changed me the most and brought the most into my life so far. Starting in 2024, I want to make it a habit to record what I saw and experienced in the year before, so that the people, events, and moments that changed me, helped me, or left unforgettable memories can stay with my future self.
 
 # Record
 
-I saw a lot of classmates around me had a habit of writing recaps, so I decided to copy them too.
-Next, I’ll organize everything by month!
+I noticed that a lot of my classmates had a habit of writing yearly recaps, so I decided to do the same.
+I’ll organize everything month by month.
 
 ## January
 
 ### Mock Exams
 
-A new year had arrived, and it was also the year I was preparing to enter university. At the time I was in the second semester of my final year of vocational high school, right in the last sprint before the standardized exam, and I was also preparing for mock exams. Although ever since I had prepared for the Industrial Technology Competition written test while also studying for the mock exams, and got 18th place nationwide, my grades had started falling in a straight line... I think part of the reason was that deep down, I believed my time should be spent on improving my professional skills rather than preparing for dull entrance exams. So I split my time 70/30, **70% on improving myself, and 30% on preparing for the exam. After getting into university, reality proved that I was right.**
+A new year had arrived, and it was also the year I was preparing for university. At the time, I was in the second semester of my final year at vocational high school, right in the last sprint before the standardized exam and still grinding through mock exams. Ever since I had prepared for the written test of the Industrial Technology Competition while also studying for mock exams, and ended up placing 18th nationwide, my grades had been dropping in a straight line. I think part of the reason was that, deep down, I believed my time should be spent improving my professional skills rather than preparing for dull entrance exams. So I split my time 70/30, **70% on improving myself and 30% on exam prep. After getting into university, reality proved that I was right.**
 
 ### Wanting to Become a Tutor
 
