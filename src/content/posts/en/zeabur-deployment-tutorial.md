@@ -52,7 +52,7 @@ I stumbled on this by accident, and I can only say it is extremely worth it. Com
 
 [![Deployed on Zeabur](https://zeabur.com/deployed-on-zeabur-dark.svg)](https://zeabur.com/referral?referralCode=viiccwen&utm_source=viiccwen)
 
-Click the link above to go to Zeabur's official website, then click Getting Start to register.
+Click the link above to go to Zeabur's official website, then click Get Started to register.
 After entering the dashboard, create a new project.
 
 ## Deploying an Application
