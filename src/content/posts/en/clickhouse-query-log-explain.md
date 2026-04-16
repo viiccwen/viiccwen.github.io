@@ -1,5 +1,5 @@
 ---
-title: "ClickHouse Series: How to Improve Query Optimization? Using system.query_log and EXPLAIN"
+title: "ClickHouse Series: How to Improve Query Performance with system.query_log and EXPLAIN"
 published: 2025-08-21
 description: ''
 image: 'https://images.prismic.io/contrary-research/ZiwDyN3JpQ5PTNpR_clickhousecover.png?auto=format,compress'

@@ -572,7 +572,7 @@ Tomorrow is the last day of the ClickHouse series :D
 15. [ClickHouse Series: Building a real-time data streaming pipeline with Kafka](https://blog.vicwen.app/posts/clickhouse-kafka-data-streaming-pipeline/)
 16. [ClickHouse Series: Best practices for batch import (CSV, Parquet, Native Format)](https://blog.vicwen.app/posts/clickhouse-batch-import/)
 17. [ClickHouse Series: Integrating ClickHouse with external data sources (PostgreSQL)](https://blog.vicwen.app/posts/clickhouse-external-data-integration/)
-18. [ClickHouse Series: How to improve query performance? Using system.query_log and EXPLAIN](https://blog.vicwen.app/posts/clickhouse-query-log-explain/)
+18. [ClickHouse Series: How to Improve Query Performance with system.query_log and EXPLAIN](https://blog.vicwen.app/posts/clickhouse-query-log-explain/)
 19. [ClickHouse Series: Advanced query acceleration with Projections](https://blog.vicwen.app/posts/clickhouse-projections-optimization/)
 20. [ClickHouse Series: Sampling queries and statistical techniques](https://blog.vicwen.app/posts/clickhouse-sampling-statistics/)
 21. [ClickHouse Series: TTL data cleanup and storage cost optimization](https://blog.vicwen.app/posts/clickhouse-ttl-storage-management/)
