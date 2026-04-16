@@ -15,7 +15,7 @@ As frontend projects continue to grow in size and require stronger modularity, d
 
 ### 1. What Is Feature-based Architecture?
 
-Feature-based Architecture emphasizes organizing a project by **feature domains** rather than slicing it horizontally by technical type, such as `components`, `hooks`, or `utils`. Its advantages include:
+Feature-based Architecture emphasizes organizing a project around **feature domains** rather than splitting it horizontally by technical type, such as `components`, `hooks`, or `utils`. Its advantages include:
 
 * **High Cohesion**: Code related to the same feature is kept in one area, making it easier to understand and modify.
 * **Low Coupling**: Boundaries between feature modules are clear, which helps collaboration and refactoring.
@@ -23,7 +23,7 @@ Feature-based Architecture emphasizes organizing a project by **feature domains*
 
 ### 2. FSD (Feature-Sliced Design)
 
-[FSD](https://feature-sliced.design/) is a more advanced framework for practicing Feature-based Architecture. It proposes a clear **Layered Model** together with the concept of **Slice-by-Feature**. If you’re interested, you can also check out their example repo.
+[FSD](https://feature-sliced.design/) is a more advanced framework for practicing Feature-based Architecture. It proposes a clear **Layered Model** together with the concept of **Slice-by-Feature**. If you’re interested, you can also take a look at their example repo.
 
 ::github{repo="feature-sliced/examples"}
 
@@ -154,7 +154,7 @@ The Processes layer combines multiple features into cross-domain business flows,
 | **Clear module boundaries**  | The Feature layer encapsulates business logic, while the Entities layer focuses on domain models, making decoupling and testing easier |
 | **Great for large projects and team collaboration** | Different developers can focus on the slices they own, reducing conflicts |
 | **Flexible expansion and refactoring** | A feature-level composition structure makes it easy to reorganize page flows or replace feature logic quickly |
-| **Testable & Maintainable**  | The high cohesion of Features and Entities naturally improves testability and maintainability |
+| **Testable and Maintainable**  | The high cohesion of Features and Entities naturally improves testability and maintainability |
 
 ## Best Practices and Common Pitfalls
 

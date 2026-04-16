@@ -1,5 +1,5 @@
 ---
-title: "Industrial Technology Competition, Computer Repair Category: My Competitor Journey"
+title: "Industrial Technology Competition, Computer Repair Category: My Journey as a Competitor"
 published: 2024-01-17
 description: ''
 image: 'https://imgur.com/iS0BysX.jpg'
@@ -13,7 +13,7 @@ lang: 'en'
 
 It has already been a year since the competition in November 2022, and I still hadn’t properly paid off this “competitor write-up debt”.... Even bubu and our skating sister kept reminding me to write it XD. Looks like it’s finally time to settle the debt....
 
-This post probably won’t be too long (update: no, it’s very long), but you’ll get to see the intense journey of a student from a rural area with almost no resources, who relied on pure stubbornness and perseverance to carve out a path at the national competition and ultimately win the championship. I believe everyone reading this will be satisfied with the story!
+This post probably won’t be too long (update: no, it’s very long), but you’ll get to see the intense journey of a student from a rural area with almost no resources, who relied on stubbornness and perseverance to carve out a path at the national competition and ultimately win the championship. I believe everyone reading this will be satisfied with the story!
 
 # Background
 
@@ -25,21 +25,21 @@ In the second semester of my second year, the department director told me, “I 
 
 But I want to clarify something first: the Computer Repair category is not about repairing computers! Our job is server administration, network management, and Arduino communication programming. We focus on Windows and Linux server roles and deployment, which is much closer to a school or enterprise network administrator position.
 
-Anyway, that’s how I entered the competitor room~. The decision was made in February, but I only gradually started taking over the training room in June, and it wasn’t until July that intensive training really began.
+Anyway, that’s how I entered the training room~. The decision was made in February, but I only gradually started taking over the training room in June, and it wasn’t until July that intensive training really began.
 
 # Training
 
 ## Walking Straight Into a Trap?
 
-Back then I entered the competitor room full of excitement, but just a few days later my mindset exploded....
+Back then I entered the training room full of excitement, but just a few days later my mindset exploded....
 
-First of all, **almost no useful materials had been left behind**. What had been passed down from previous years was practically yellowed with age, which meant it was ancient. Some system syntax and architecture had already changed completely, and some of it had even been abandoned entirely. I simply could not use any of it. In fact, it would only slow down my practice.
+First of all, **almost no useful materials had been left behind**. What had been passed down from previous years was practically yellowed with age, so it was basically ancient. Some system syntax and architecture had already changed completely, and some of it had even been abandoned entirely. I simply could not use any of it. In fact, it would only slow down my practice.
 
 Then there was the senior student, who was unbelievably terrible.... His legendary deeds included: bringing code written by Wenxian into the competition venue and then not understanding any of it himself; placing second to last in the competition, with the last-place person only ranking below him because they got COVID and didn’t even compete; and worst of all, he secretly took tools out of my toolkit without my permission, and I caught him on the spot ==. He also did not guide me at all in the early stages of practice. Well, obviously, because he was that useless. So I had to face everything alone.
 
 Finally, there was my advisor.... Wenxian had his own classes to teach and also had to manage his evening study homeroom, so he simply didn’t have time to focus on the competitor side of things. On top of that, the school’s competition results in previous years had only been average, so he wasn’t very familiar with the actual competition content either. Yes, I also thought that was kind of wild. He could only guide me through some very basic knowledge, like Class C and Class B certificate question banks. Everything else was basically left to chance.... Sometimes I was even the one answering his questions.
 
-OK, let’s summarize: a terrible senior, no data, and an advisor who didn’t really understand the competition content. No wonder the previous seniors hadn’t done particularly well. Faced with this kind of “hell mode opening,” most people would probably just give up, stop caring, or even drop out halfway through.
+OK, let’s summarize: a terrible senior, no data, and an advisor who didn’t really understand the competition content. No wonder the previous seniors hadn’t done particularly well. Faced with this kind of “hell-mode opening,” most people would probably just give up, stop caring, or even drop out halfway through.
 
 At the time, I told the department director about the situation. He only said, “It’s okay. Just take care of your schoolwork first. Academics come first. At least you’ll still have school.” That was the situation I faced when I took over in June. Even the director felt there was probably not much hope. So how was a competitor supposed to face a challenge like this?
 
@@ -73,13 +73,13 @@ I once calculated that if it took me 12 minutes to make one cable, then six cabl
 
 We were also particular about tool placement. The computer in the center, power strip in the back, soldering iron on the right, tools on the left. The purpose was to make everything foolproof and keep the training environment as close as possible to the real competition site, reducing the chance of mistakes and making the process more familiar.
 
-I was also strict about food. For the two weeks before the competition, I only ate 7-11 salads and made sure my stomach stayed completely normal, all to eliminate the possibility of losing because of food on competition day. If anything went wrong, the trophy could slip very far away. That kind of detail mattered to me too.
+I was also strict about food. For the two weeks before the competition, I only ate 7-Eleven salads and made sure my stomach stayed completely normal, all to eliminate the possibility of losing because of food on competition day. If anything went wrong, the trophy could slip very far away. That kind of detail mattered to me too.
 
 ![](https://imgur.com/L4dRPvy.jpg)
 
 ## Physically and Mentally Exhausted
 
-One and a half months before the competition, the department officially pulled me out of regular classes, as they do for all competitors, and moved me fully into the competitor room so I could focus entirely on the competition.
+One and a half months before the competition, the department officially pulled me out of regular classes, as they do for all competitors, and moved me fully into the training room so I could focus entirely on the competition.
 
 Daily schedule:
 | Time | Activity |
@@ -91,13 +91,13 @@ Daily schedule:
 | 17:40-21:20 | Practice |
 | 21:30 | Head home |
 
-That lasted for about a month and a half. Most of the practice was done alone. There was another competitor in the room, but we were from different categories, so at most we only exchanged a sentence or two when we were tired. That was it. So during those dull competitor training days, I was basically accompanied only by the computer, the soldering board, and, well, Google.
+That lasted for about a month and a half. Most of the practice was done alone. There was another competitor in the room, but we were from different categories, so at most we only exchanged a sentence or two when we were tired. That was it. So during those dull training days, I was basically accompanied only by the computer, the soldering board, and, well, Google.
 
 Still, I really liked lunch and dinner time, because I would go eat with two students from the Electronics department. On the way to meals, we often talked about what we had practiced that day. Even though we were all from different categories and each had our own stories, in those moments we could understand each other’s feelings and vent the loneliness and pressure that had built up inside. Honestly, that was probably the happiest part of the whole period, second only to winning the award itself.
 
-At the end of each day of practice, I would take the second-to-last No. 788 bus from Ruifang to Keelung. The night was dim, my heart was tired, my body was tired, and I often felt exhausted while sitting on the bus. At times like that, I would imagine myself standing on the award stage, draped in the school flag, holding the trophy, the center of attention. The moment I thought about that, the exhaustion suddenly felt smaller. Maybe it was worth continuing. If the effort now could be exchanged for future achievement, then that was a pretty good deal.
+At the end of each day of practice, I would take the second-to-last Route 788 bus from Ruifang to Keelung. The night was dim, my heart was tired, my body was tired, and I often felt exhausted while sitting on the bus. At times like that, I would imagine myself standing on the award stage, draped in the school flag, holding the trophy, the center of attention. The moment I thought about that, the exhaustion suddenly felt smaller. Maybe it was worth continuing. If the effort now could be exchanged for future achievement, then that was a pretty good deal.
 
-But I do need to complain: the 788 bus often skipped runs, which meant I sometimes couldn’t catch any bus at all. Sometimes I would wait from 9:20 all the way until the final bus at 10:30, cursing inwardly the whole time about what a broken rural area this was. And back then I wasn’t even 18 yet, so I couldn’t ride a scooter home. I often just waited and waited by the road. To kill time, I made a decision for myself: since I’m already here, why not go ahead and prepare for the GEPT Intermediate-High exam?
+But I do need to complain: the 788 bus often skipped runs, which meant I sometimes couldn’t catch any bus at all. Sometimes I would wait from 9:20 all the way until the final bus at 10:30, cursing inwardly the whole time about what a broken rural bus system this was. And back then I wasn’t even 18 yet, so I couldn’t ride a scooter home. I often just waited and waited by the road. To kill time, I made a decision for myself: since I’m already here, why not go ahead and prepare for the GEPT Intermediate-High exam?
 
 So I started memorizing high school level 5 and 6 vocabulary. That became my main weapon against the boredom of waiting for the bus, and during that period I ended up preparing not only for the competition, but also for the GEPT on the side, which I eventually passed.
 
@@ -246,11 +246,11 @@ New Taipei City is probably one of the places that values vocational high school
 
 ![](https://imgur.com/fLBFs3S.jpg)
 
-Award-winning students were even given the chance to go abroad for overseas study visits, I went to Australia, though only the top two places were fully funded. Other rankings had to pay part of the cost. So yes, New Taipei City was the one that sent me on my first trip abroad.
+Award-winning students were even given the chance to go on overseas study visits. I went to Australia, although only the top two places were fully funded. Other rankings had to pay part of the cost. So yes, New Taipei City was the one that sent me on my first trip abroad.
 
 ![](https://imgur.com/Y5zLf8Q.jpg)
 
-The competitors from our school also almost all placed, and this year our school even produced two champions. Secretly speaking, the principal was really tipsy that day....
+Almost all of the competitors from our school placed, and this year our school even produced two champions. Secretly speaking, the principal was really tipsy that day....
 
 ![](https://imgur.com/kHAGLF9.jpg)
 

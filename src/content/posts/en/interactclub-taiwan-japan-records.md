@@ -1,5 +1,5 @@
 ---
-title: 2023 Taiwan-Japan Interact Club Public Service Exchange Event
+title: 2023 Taiwan-Japan Interact Club Exchange Event
 published: 2023-08-03
 description: ''
 image: 'https://imgur.com/AAZuqrE.jpg'
@@ -12,7 +12,7 @@ lang: 'en'
 
 # Preface
 
-In June 2023, an uncle asked whether I would be willing to join the Taiwan-Japan Interact Club exchange event organized by the Rotary Club of Keelung East. From 2023/7/24 to 2023/7/27, I would be responsible for welcoming and accompanying the senior Rotary members from the Yatsushiro South Rotary Club in Japan and the students from the Yatsushiro Interact Club who had traveled a long way to come here. Together, we would take part in friendship-building, sports, and public service exchanges, including beach cleaning and helping clean the homes of elderly people living alone. I thought about it for a few days and felt it would be a really good experience, so I decided to join. I even turned down an invitation to the Ruizhong AID Summer Vocation afterward QQ.
+In June 2023, an uncle asked whether I would be willing to join the Taiwan-Japan Interact Club exchange event organized by the Rotary Club of Keelung East. From 2023/7/24 to 2023/7/27, I would be responsible for welcoming and accompanying the senior Rotary members from the Yatsushiro South Rotary Club in Japan and the students from the Yatsushiro Interact Club who had traveled a long way to come here. Together, we would take part in friendship-building, sports, and public service exchanges, including beach cleaning and helping clean the homes of elderly people living alone. I thought about it for a few days and felt it would be a really good experience, so I decided to join. I even turned down an invitation to the Ruizhong AID summer program afterward QQ.
 
 # Day 1
 
@@ -33,7 +33,7 @@ After the pickup, we headed to Heping Island to walk around and chat. We even we
 ![](https://imgur.com/zlkSkRr.png)
 ![](https://imgur.com/PQj7mzT.png)
 
-In the evening, we went to some seafood restaurant for dinner. With the help of the older sister translating for us, we asked about the differences between Japan and Taiwan, like why Taiwan has so many scooters, school hours (their high school schedule is 8:40 to 4:00... incredibly nice), after-school clubs (some were in baseball, some in badminton), and hobbies (anime, baseball, music, reading). That helped us close the distance a little.
+In the evening, we went to a seafood restaurant for dinner. With the help of the older sister translating for us, we asked about the differences between Japan and Taiwan, like why Taiwan has so many scooters, school hours (their high school schedule is 8:40 to 4:00... incredibly nice), after-school clubs (some were in baseball, some in badminton), and hobbies (anime, baseball, music, reading). That helped us close the distance a little.
 
 ![](https://imgur.com/KdsdV2d.png)
 ![](https://imgur.com/qHo96Hc.png)

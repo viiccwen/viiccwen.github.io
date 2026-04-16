@@ -1,5 +1,5 @@
 ---
-title: 'SITCON 2025 - From "Managing" to "Leading": Sharing Community Leadership Experience'
+title: 'SITCON 2025 - From Managing to Leading: Sharing Community Leadership Experience'
 published: 2025-03-08
 description: ""
 image: "../../../assets/posts/sitcon-2025-management-leadership.png"
@@ -9,14 +9,14 @@ draft: false
 lang: "en"
 ---
 
-> This article is an excerpt from [my SITCON 2025 submission](https://sitcon.org/2025/agenda/62f54e/)
+> This article is adapted from [my SITCON 2025 submission](https://sitcon.org/2025/agenda/62f54e/)
 
-In student life, we all get the chance to join clubs, student organizations, or even build our own communities. But the shift from "managing" to "leading" does not happen overnight. In this article, I will share my experience with community leadership: how to get started, how to lead, and how to truly create impact.
+In student life, we all get the chance to join clubs, student organizations, or even build our own communities. But the shift from "managing" to "leading" does not happen overnight. In this article, I will share my experience with community leadership: how to get started, how to lead, and how to create real impact.
 
 # Why choose leadership?
-If you have ever served as a club officer or joined a large event, you may have realized that a "leader" and a "manager" are not the same role. A manager keeps things running smoothly, while a leader is the person who inspires the team and drives change.
+If you've ever served as a club officer or helped run a large event, you've probably realized that a "leader" and a "manager" are not the same role. A manager keeps things running smoothly, while a leader inspires the team and drives change.
 
-In my experience, being a community leader not only gave me a lot of hands-on practice, but also taught me how to work with different people, solve problems, and even lead a team through adversity.
+In my experience, community leadership not only gave me a lot of hands-on practice, but also taught me how to work with different people, solve problems, and even lead a team through adversity.
 
 
 # How do you start becoming a community leader?
@@ -35,7 +35,7 @@ Beyond campus clubs, student community conferences are also a great opportunity,
 
 They are a chance to build connections and meet people who share your interests.
 
-So when you attend these events, remember to talk to people actively instead of just sitting in the audience. For your first time, you can even ask friends nearby whether they are going too, so you can go together and feel less nervous 🏃
+So when you attend these events, remember to actively talk to people instead of just sitting in the audience. For your first time, you can even ask friends nearby whether they are going too, so you can go together and feel less nervous 🏃
 
 
 # From "managing" to "leading"
@@ -62,7 +62,7 @@ If you only focus on external development, the internal side can become loose an
 
 
 # Expand your network and create more opportunities
-Through my experience as a community leader, I found that **relationships** are an extremely important resource. Through community events and meetups, I not only met many excellent people, but also gained a lot of valuable opportunities.
+From my experience as a community leader, **relationships** are an extremely important resource. Through community events and meetups, I not only met many excellent people, but also gained a lot of valuable opportunities.
 
 ## How can you build your network effectively?
 1. Take the initiative - do not be shy; be brave and meet new people.
@@ -125,12 +125,12 @@ Cold outreach may sound difficult, but it is actually a very practical skill. Wh
 
 
 ## Conclusion: There are plenty of resources, the real question is whether you are willing to act
-These resources are only the tip of the iceberg. The key is whether you are willing to take the first step, participate boldly, learn, and try. Remember, nobody is born a leader; every skill is built through real-world practice. So starting today, try attending an event, joining a club, or reaching out to an industry professional. You will find yourself growing one step at a time! 💪🔥
+These resources are only the tip of the iceberg. The key is whether you are willing to take the first step and boldly participate, learn, and try. Remember, nobody is born a leader; every skill is built through real-world practice. So starting today, try attending an event, joining a club, or reaching out to an industry professional. You will find yourself growing one step at a time! 💪🔥
 
 
 # Closing thoughts
-For me, the journey from "managing" to "leading" was challenging, but also deeply rewarding. I learned not only how to manage a team, but also how to truly lead a community forward.
-If you are interested in becoming a community leader, I encourage you to start small, try bravely, and build experience. Most importantly, do not be afraid of failure, because every challenge is an opportunity to grow.
+For me, the journey from "managing" to "leading" was challenging but deeply rewarding. I learned not only how to manage a team, but also how to truly lead a community forward.
+If you are interested in becoming a community leader, I encourage you to start small, try boldly, and build experience. Most importantly, do not be afraid of failure, because every challenge is an opportunity to grow.
 Finally, here are a few books and videos that helped me a lot:
 1. *The 21 Irrefutable Laws of Leadership*
 2. Simon Sinek's TED talk: "Why Good Leaders Make You Feel Safe"

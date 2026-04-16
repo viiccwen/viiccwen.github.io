@@ -1,5 +1,5 @@
 ---
-title: "New Taipei City Overseas Technical Training Sponsorship: A Journey to Australia"
+title: "New Taipei City Overseas Technical Training Program: A Journey to Australia"
 published: 2023-05-03
 description: ''
 image: 'https://imgur.com/zZcw6jW.jpg'
@@ -12,24 +12,24 @@ lang: 'en'
 
 # Preface
 
-On 2022/10/24, I won first place in the Industrial Skills Competition - Computer Repair category, so I received sponsorship from New Taipei City and was invited, together with other outstanding students in technical skills from across New Taipei City (Golden Hand Award winners in skills competitions), to take part in a two-week overseas technical training program in **the United States, Australia, and Japan**.
+On 2022/10/24, I won first place in the Industrial Skills Competition - Computer Repair category. As a result, New Taipei City sponsored me and invited me, together with other outstanding technical students from across the city (the Golden Hand Award winners), to take part in a two-week overseas technical training program in **the United States, Australia, and Japan**.
 
-The purpose of this overseas training was:<br>
+The goals of this overseas training were:<br>
 
 - To meet people from different cultures - exchange our cultures and learning journeys with each other.<br>
 - To learn knowledge and skills from other countries - turn them into our own abilities and bring them back to Taiwan to share.<br>
 - To broaden our horizons - expand our understanding of the world, whether in skills, culture, or scenery.<br>
 - To develop communication skills and English conversation ability (from the perspective of the U.S./Australia group).<br>
 
-I want to thank New Taipei City Mayor **Hou You-yi**, who strongly supported this project, as well as the bureau directors, division chiefs, and others who helped push it forward, and also the **coaches** who accompanied us abroad and taught us wholeheartedly while preparing for the competition. If even one part had been missing, we would not have received this honor, nor would we have had the chance to go abroad and broaden our horizons. New Taipei City is also **the only city/county in Taiwan that offers this kind of overseas training opportunity**. This really is excellent public policy, and I offer my deepest bow to New Taipei City here.
+I want to thank New Taipei City Mayor **Hou You-yi**, who strongly supported this project, as well as the bureau directors, division chiefs, and others who helped push it forward. I also want to thank the **coaches** who accompanied us abroad and taught us wholeheartedly while preparing for the competition. If even one part had been missing, we would not have received this honor, nor would we have had the chance to go abroad and broaden our horizons. New Taipei City is also **the only city/county in Taiwan that offers this kind of overseas training opportunity**. This really is excellent public policy, and I sincerely bow in gratitude to New Taipei City here.
 
 # Pre-departure Training
 
 Once we found out we could go abroad, of course we had to go through pre-departure training! After all, we were representing not just our schools, but our city and even Taiwan's top technical talent, so we definitely could not embarrass ourselves overseas. So on 2023/04/15-16, we had two days of pre-departure training. Since I was in the Australia group, our training was conducted entirely in English and covered social situations, buying and selling culture (such as tipping culture), company visits, and learning-outcome presentations. They also arranged for a teacher from Yingge Vocational High School, who had previously led the U.S. group, to share his experience. From those two days of courses, I learned a lot, developed a much clearer understanding of the training trip two weeks later, and strengthened my English skills to handle different situations, such as the language aesthetics of asking questions, communication skills, and buying-and-selling culture.
 
-Also, because everyone present was among the top national-level skills students of that year, it really opened my eyes. The person sitting next to me during training was the national champion (Golden Hand No. 1), the person in front of me was also a champion, later there was someone from NTU sitting ahead, and there were even students chatting with me who had placed at the world level. It all felt unreal. Everyone radiated such a strong aura, and I felt like I was the weakest one there, trembling in the corner......
+Also, because everyone present was among the top national-level skills students of that year, it really opened my eyes. The person sitting next to me during training was the national champion (Golden Hand No. 1), the person in front of me was also a champion, later there was someone from NTU sitting ahead, and there were even students chatting with me who had placed at the world level. It all felt unreal. Everyone radiated such a strong aura, and I felt like the weakest one there, trembling in the corner......
 
-When we chatted, everyone was very warm and lively. Since we all came from different categories, from computer repair in the information/electronics field to landscape horticulture, there was genuinely a lot to talk about. There was none of that cold, murderous "contestant" atmosphere, and you could not tell that the person chatting with you had actually defeated 40 or 50 top competitors from around the country. But when the topic turned to their area of expertise, everyone seemed to transform. They became serious and confident. Maybe that is part of the charm of being a competitor. That confident, articulate expression hides just how much sweat and tears were poured in behind it.
+When we chatted, everyone was warm and lively. Since we all came from different categories, from computer repair in the information/electronics field to landscape horticulture, there was genuinely a lot to talk about. There was none of that cold, cutthroat "contestant" atmosphere, and you could not tell that the person chatting with you had actually defeated 40 or 50 top competitors from around the country. But when the topic turned to their area of expertise, everyone seemed to transform. They became serious and confident. Maybe that is part of the charm of being a competitor. That confident, articulate expression hides just how much sweat and tears went into it.
 
 There were truly experts everywhere. It made me feel how small I was, while also stirring up my desire to keep improving. That made me carry endless anticipation for this trip, and I looked forward to beginning this journey through Australia with everyone on 2023/05/01.
 
@@ -41,9 +41,9 @@ Today was the first day of our Australia training trip. At 3:30 a.m. on 2023/5/1
 
 After that, our passports were handed out, we were reminded of things to watch out for, then we checked in our luggage, passed through customs, and went through departure procedures. In the end, we boarded the flight to Brisbane!
 
-Since this was my first time going abroad, everything felt new and unfamiliar. I looked up at the view outside the window as the buildings below gradually shrank while the plane climbed higher. Buildings that had once seemed so tall now looked like tiny little stars. Everything felt so unfamiliar and so small, and it also meant that we had officially embarked on this study-and-visit journey in Australia.
+Since this was my first time going abroad, everything felt new and unfamiliar. I looked up at the view outside the window as the buildings below gradually shrank while the plane climbed higher. Buildings that had once seemed so tall now looked like tiny little stars. Everything felt unfamiliar and small, and it also meant that we had officially embarked on this study-and-visit journey in Australia.
 
-But honestly, flying is really torture... The most boring part of the whole trip was probably sitting on the plane. Even with a screen in front of you for watching things and playing games, that cramped seat combined with such a long flight is basically a form of torture for modern people.
+But honestly, flying is really torture... The most boring part of the whole trip was probably sitting on the plane. Even with a screen in front of you for watching things and playing games, that cramped seat combined with such a long flight is basically torture for anyone today.
 
 This was also my first time eating the legendary airplane meal. It tasted a little like frozen food, but I did get to try bread rolls with New Zealand butter, which was pretty novel.
 
@@ -51,9 +51,9 @@ This was also my first time eating the legendary airplane meal. It tasted a litt
 
 And during those eight hours, what I did was: sleep, wake up and eat, look at the scenery, study calculus, sleep, wake up and eat, study calculus again (there was no scenery anymore, only clouds).
 
-We eventually arrived in Brisbane. A quick bit of background here: Brisbane is located in Queensland, Australia, and is the most populous city in Queensland. It lies on the eastern side of mainland Australia, with the Sunshine Coast to the north and the internationally famous Gold Coast to the south. Its metropolitan population is 2.3 million, making it Australia's third-largest metropolitan area after Sydney and Melbourne. The urban cluster in southeast Queensland centered around Brisbane has a population of over 3.27 million. This was the area where we would stay during the trip, including Brisbane and the Gold Coast.
+We eventually arrived in Brisbane. For context, Brisbane is located in Queensland, Australia, and is the most populous city in the state. It lies on the eastern side of mainland Australia, with the Sunshine Coast to the north and the internationally famous Gold Coast to the south. Its metropolitan population is 2.3 million, making it Australia's third-largest metropolitan area after Sydney and Melbourne. The urban cluster in southeast Queensland centered around Brisbane has a population of over 3.27 million. This was the area where we would stay during the trip, including Brisbane and the Gold Coast.
 
-On the way to the hotel, my eyes were absolutely opened. Tall, majestic buildings full of artistic character were things I had only ever seen online before, and back then I would just think "that looks nice" and scroll past. But being there in person was overwhelmingly shocking. Almost everyone on the bus was quietly admiring the buildings. They were so different from Taiwan's. Taiwan's... never mind. Completely outclassed. Though that may also be because this is one of Australia's major metropolitan cities, and the difference between a big city and the countryside is enormous.
+On the way to the hotel, my eyes were absolutely opened. Tall, majestic buildings full of artistic character were things I had only ever seen online before, and back then I would just think "that looks nice" and scroll past. But being there in person was overwhelming. Almost everyone on the bus was quietly admiring the buildings. They were so different from Taiwan's. Taiwan's... never mind. Completely outclassed. Though that may also be because this is one of Australia's major metropolitan cities, and the difference between a big city and the countryside is enormous.
 
 By the way, at the time it was already 8 p.m. in Australia (two hours ahead of Taiwan), yet there was not a single person on the roads or inside the buildings. Still, the streets remained brightly lit. It seemed like the government requires the lights to stay on. It also indirectly confirmed that even in a big Australian city, places start closing one after another around 4 p.m.
 
@@ -61,23 +61,23 @@ Just on the first day alone, I already felt many differences from Taiwan, and it
 
 ![](https://imgur.com/3U8torp.jpg)
 
-This is a casino in Australia. At first I thought it was a museum... I looked it up and it seems to be in a British architectural style. People under twenty are not allowed inside, and there were two security guards standing at the entrance. If you are an international tourist, they check your passport.
+This is a casino in Australia. At first I thought it was a museum... I looked it up later and it seems to be built in a British architectural style. People under twenty are not allowed inside, and two security guards were standing at the entrance. If you are an international tourist, they check your passport.
 
-Since it was already late, we checked into the hotel, Hotel Indigo. In this downtown area where land is incredibly expensive, it only occupied a small patch of space, but the price was still extremely high... I was shocked when I looked it up. All I can say is I am very grateful for the financial support from the education bureau. I will definitely study hard here.
+Since it was already late, we checked into Hotel Indigo. In this downtown area where land is incredibly expensive, it takes up only a small footprint, but the price was still extremely high... I was shocked when I looked it up. All I can say is that I am very grateful for the financial support from the education bureau. I will definitely make the most of it and study hard here.
 
 ![](https://imgur.com/5BF3Rja.jpg)
 
-This was a hotel with a very artistic atmosphere. Right at the entrance, you could see several artworks that made you stop and take an extra look. The entrance floor here is called G, meaning Ground. If you want to find staff for check-in or check-out, you need to take the elevator to 1F.
+This hotel had a very artistic atmosphere. Right at the entrance, you could see several artworks that made you stop and take an extra look. The entrance floor is labeled G, meaning Ground. If you want to find staff for check-in or check-out, you need to take the elevator to 1F.
 
-After getting our room cards and listening to Director Jianjian's instructions, we went back to our rooms. And once I opened the room, all I could say was that I had been shallow.
+After getting our room cards and listening to Director Jianjian's instructions, we went back to our rooms. And once I opened the room, all I could say was that I had underestimated it.
 
 ![](https://imgur.com/iQrhDmp.jpg)
 
 ![](https://imgur.com/Yxe1KFC.jpg)
 
-I cannot just say I liked this room. I absolutely loved it. The power of money, indeed.... But a lot of the lights were linked together, so it was really hard to intuitively turn things on and off. Also, the bathroom door could not be locked ahhh. Luckily I was staying with my instructor. If I had been sharing with another guy, just imagining that situation feels disastrous.
+I cannot just say I liked this room. I absolutely loved it. The power of money, indeed.... But a lot of the lights were linked together, so it was really hard to figure out intuitively how to turn things on and off. Also, the bathroom door could not be locked ahhh. Luckily I was staying with my instructor. If I had been sharing with another guy, just imagining that situation feels disastrous.
 
-After organizing my luggage and carry bag, I sat on the bed and still felt like all of this was just a dream. I could not believe I had really made it to Australia and stepped onto an unknown land. Everything felt so unfamiliar. It was only after saying a few words to my instructor that I felt like I was actually in the real world.
+After organizing my luggage and carry bag, I sat on the bed and still felt like all of this was just a dream. I could not believe I had really made it to Australia and stepped onto an unknown land. Everything felt unfamiliar. It was only after saying a few words to my instructor that I felt like I was actually in the real world.
 
 Sigh, too tired. Time to sleep first....
 
@@ -85,17 +85,17 @@ Sigh, too tired. Time to sleep first....
 
 Today was the second day of the Australia training trip. After breakfast at 7:00 a.m. on 2023/5/2, we set out for TAFE Queensland South Bank Campus.
 
-Even while sitting on the bus, I already felt the scenery outside was beautiful. Instead of suffocating metal-roof houses, trash everywhere, and tiny sidewalks that make you want to cry, there were rivers, artistic architecture, trees, and crows and birds freely soaring around (here, crows are considered auspicious). I also recorded a few clips, though the quality is a bit poor lol.
+Even from the bus, I could already tell the scenery outside was beautiful. Instead of suffocating metal-roof houses, trash everywhere, and tiny sidewalks that make you want to cry, there were rivers, artistic architecture, trees, and crows and birds freely soaring around (here, crows are considered auspicious). I also recorded a few clips, though the quality is a bit poor lol.
 
 <video src="https://imgur.com/5R1D3xV.mp4" controls width="50%" height="50%"></video>
 
-After arriving at TAFE Queensland, we first attended the opening ceremony for the course. They explained the difference between the certificate awarded for this short-term course and a formal diploma, introduced the people and teachers involved in this project, and went over a few practical matters. The opening ceremony proceeded smoothly and successfully, symbolizing a good start for the course. We also hoped to complete it successfully and learn many new things from it.
+After arriving at TAFE Queensland, we first attended the course opening ceremony. They explained the difference between the certificate awarded for this short-term course and a formal diploma, introduced the people and teachers involved in this project, and went over a few practical matters. The opening ceremony went smoothly, symbolizing a good start to the course. We also hoped to complete it successfully and learn many new things from it.
 
-Next came the campus tour! The campus was very open, with no walls, only artistic buildings and lush greenery everywhere, which instantly put you in a good mood. We visited the health-care building and saw dental equipment, treatment processes, tools, and more. The students included both young people and older adults. As long as someone wants to learn, TAFE is willing to teach them generously. That spirit is something we should learn from too!
+Next came the campus tour! The campus was very open, with no walls, just artistic buildings and lush greenery everywhere, which instantly put you in a good mood. We visited the health-care building and saw dental equipment, treatment processes, tools, and more. The students included both young people and older adults. As long as someone wants to learn, TAFE is willing to teach them generously. That spirit is something we should learn from too!
 
 ![](https://imgur.com/RZqYOYW.jpg)
 
-We also visited the dental lab building, where many students were practicing grinding and cleaning teeth. All kinds of instruments were laid out on the tables, and teachers were guiding students. It was real hands-on learning, using practical work to build knowledge and strengthen ability. It also made me think back to how tirelessly my own instructor had taught me by my side. A mentor is one of the most important benefactors in our lives.
+We also visited the dental lab building, where many students were practicing tooth grinding and cleaning. All kinds of instruments were laid out on the tables, and teachers were guiding students. It was real hands-on learning, using practical work to build knowledge and strengthen skills. It also made me think back to how tirelessly my own instructor had taught me by my side. A mentor is one of the most important benefactors in our lives.
 
 ![](https://imgur.com/MY6kguM.jpg)
 
@@ -103,7 +103,7 @@ And the library too!
 
 ![](https://imgur.com/vFU6syz.jpg)
 
-In the afternoon, we went to the Queensland Gallery of Modern Art and a science museum center to understand local arts and cultural activities. Public participation was also very high. Everyone felt very chill and at ease, and the air itself seemed to be filled with art.
+In the afternoon, we went to the Queensland Gallery of Modern Art and a science museum center to understand local arts and cultural activities. Public participation was also very high. Everyone felt very chill and at ease, and the air itself seemed full of art.
 
 ![](https://imgur.com/lGRIFe6.jpg)
 
@@ -117,7 +117,7 @@ There were also tons of birds like the one in the picture above along the way. I
 
 All I can say is, if you do not understand the art, then it is art....
 
-Finally, we went to South Bank Parklands to look at Queensland's architectural style and understand the rhythm of local life. The locals live very leisurely lives. On weekdays they only work until around 4 p.m., and on days off they sunbathe on the beach, picnic on the grass, and barbecue by the lake. It is completely a "play life," and it was really enviable. No wonder everyone likes vacationing in Australia~
+Finally, we went to South Bank Parklands to look at Queensland's architectural style and understand the rhythm of local life. The locals live at a very relaxed pace. On weekdays they only work until around 4 p.m., and on days off they sunbathe on the beach, picnic on the grass, and barbecue by the lake. It is basically a full-on "play life," and it was really enviable. No wonder everyone likes vacationing in Australia~
 
 ![](https://imgur.com/Z1DKvxN.jpg)
 
