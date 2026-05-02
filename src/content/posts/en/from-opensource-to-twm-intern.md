@@ -35,7 +35,7 @@ At first, it was not easy at all. Compared with the projects I had worked on bef
 
 But that process taught me a lot. It was also when I began to engage with engineering as something deeper than just writing code. I learned how to think about maintainable software, how to collaborate with developers from different backgrounds, and how to make code understandable and acceptable to others.
 
-Over time, I became able to contribute more consistently, from small fixes to feature improvements, and I also began reviewing other people's pull requests. Up to now, I have accumulated [30+ PRs](https://github.com/apache/mahout/pulls?q=is%3Apr+author%3Aviiccwen+) and [60+ code reviews](https://github.com/apache/mahout/pulls?q=is%3Apr+reviewed-by%3Aviiccwen). Behind those numbers are countless rounds of discussion, challenges, revisions, and learning.
+Over time, I became able to contribute more consistently, from small fixes to feature improvements, and I also began reviewing other people's pull requests. Up to now, I have accumulated [30 PRs](https://github.com/apache/mahout/pulls?q=is%3Apr+author%3Aviiccwen+) and [60 code reviews](https://github.com/apache/mahout/pulls?q=is%3Apr+reviewed-by%3Aviiccwen). Behind those numbers are countless rounds of discussion, challenges, revisions, and learning.
 
 ## Community Opened the Door
 
