@@ -54,7 +54,7 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "LinkedIn",
 			icon: "fa6-brands:linkedin",
-			url: "https://www.linkedin.com/in/guan-hua-wen-625bb0270/",
+			url: "https://www.linkedin.com/in/viiccwen/",
 		},
 		{
 			name: "Instagram",
