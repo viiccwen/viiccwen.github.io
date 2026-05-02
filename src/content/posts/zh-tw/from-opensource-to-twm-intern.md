@@ -34,7 +34,7 @@ lang: 'zh-tw'
 
 一開始其實並不順利。相較於自己過去熟悉的專案，Mahout 後來改版是在做 Quantum ML 和 GPU 平行運算，我過往根本沒接觸過這種專案，需要花更多時間理解知識背景與架構。我花了不少時間在學習相關知識和閱讀程式碼、理解 mailing list 和 Community 的討論，甚至只是為了釐清一個 issue，就需要反覆查資料與實驗。但也正是在這樣的過程中，讓我從中學習到了非常多，也是讓我開始真正接觸到「工程」而不只是「寫程式」。如何設計可維護的軟體、如何與不同背景的開發者協作、以及如何讓一段程式碼能被他人理解與接受。
 
-隨著時間推進，我逐漸能夠穩定地提出貢獻，從小型修正到功能改善，也開始參與其他人的 PR review。到目前為止，我已經累積了 [30+ 個 PR](https://github.com/apache/mahout/pulls?q=is%3Apr+author%3Aviiccwen+) 與 [60+ 個 code review](https://github.com/apache/mahout/pulls?q=is%3Apr+reviewed-by%3Aviiccwen)，這些數字背後其實代表的是無數次的來回討論、被 challenge、以及不斷修正的過程。
+隨著時間推進，我逐漸能夠穩定地提出貢獻，從小型修正到功能改善，也開始參與其他人的 PR review。到目前為止，我已經累積了 [30 個 PR](https://github.com/apache/mahout/pulls?q=is%3Apr+author%3Aviiccwen+) 與 [60 個 code review](https://github.com/apache/mahout/pulls?q=is%3Apr+reviewed-by%3Aviiccwen)，這些數字背後其實代表的是無數次的來回討論、被 challenge、以及不斷修正的過程。
 
 ## 擁抱源來適你
 
