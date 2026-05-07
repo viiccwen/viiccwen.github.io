@@ -13,3 +13,4 @@
 
 ::github{repo="apache/airflow"}
 ::github{repo="apache/mahout"}
+::github{repo="astronomer/dag-factory"}
